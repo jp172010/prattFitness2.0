@@ -1,0 +1,45 @@
+#messages {
+  color: #007bff;
+  height: 54vh;
+  border-style: solid;
+  padding: 2vh;
+  background-color: goldenrod;
+  text-align: center;
+  border-color: white;
+}
+#workout {
+  color: #007bff;
+  height: 54vh;
+  border-style: solid;
+  padding: 2vh;
+  background-color: goldenrod;
+  text-align: center;
+  border-color: white;
+}
+#calendar {
+  color: #007bff;
+  height: 28vh;
+  border-style: solid;
+  padding: 2vh;
+  background-color: goldenrod;
+  text-align: center;
+  border-color: white;
+}
+#recentWorkouts{
+    color: #007bff;
+    height: 54vh;
+    border-style: solid;
+    padding: 2vh;
+    background-color: goldenrod;
+    text-align: center;
+    border-color: white;
+}
+#homeContainer{
+  background-color: #0033ff;
+}
+.goal{
+  margin: 1vh;
+  background-color: #0033ff;
+  color: goldenrod;
+}
+

@@ -1,0 +1,44 @@
+#main {
+  width: 100%;
+  height: 89vh;
+  background-color: #007bff;
+}
+#video {
+  background-color: white;
+  text-align: center;
+  height: 35vh;
+}
+#guest {
+  color: goldenrod;
+  height: 54vh;
+  border-style: solid;
+  padding: 2vh;
+  background-color: #007bff;
+  text-align: center;
+  border-color: goldenrod;
+}
+#createAnAccountCol {
+  color: goldenrod;
+  height: 54vh;
+  border-color: goldenrod;
+  border-style: solid;
+  padding: 2vh;
+  text-align: center;
+  background-color: #007bff;
+}
+.guestItem {
+  margin-bottom: 0;
+  font-size: 2vw;
+}
+.guestItemsDiv {
+  border-style: solid;
+  margin-bottom: 1vh;
+}
+#createAnAccount {
+  font-size: 3vw;
+}
+#guestCol {
+  font-size: 3vw;
+}
+
+

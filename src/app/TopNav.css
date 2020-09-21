@@ -1,0 +1,10 @@
+#navbarRow{
+    width: 100vw;
+}
+#loginButton{
+    margin-bottom: 1vh;
+}
+#signOutButton{
+    margin-top: 1vw;
+    background-color: #8b1d42;
+}
