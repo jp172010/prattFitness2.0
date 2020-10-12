@@ -7,7 +7,6 @@ import { Form } from "react-bootstrap";
 
 export const SignUp = () => {
   const [show, setShow] = useState(false);
-
   const handleShow = () => setShow(true);
   const handleClose = () => setShow(false);
 
@@ -28,20 +27,28 @@ export const SignUp = () => {
       await app
         .auth()
         .createUserWithEmailAndPassword(email.value, password.value);
-      const user = firebase.auth().currentUser;
-      user.updateProfile({
-        displayName: name.value,
+        let displayName = name.value 
+        const user = firebase.auth().currentUser;     
+     await user.updateProfile({
+        displayName: displayName,
       });
-      if (user != null) {
-        let name = user.displayName;
-        let email = user.email;
-        let uid = user.uid;
-        writeUserData(uid, name, email);
-      }
+  if (user != null) {
+    let name = user.displayName;
+    let email = user.email;
+    let uid = user.uid;
+    writeUserData(uid, name, email);
+  }
     } catch (error) {
       alert(error);
     }
   };
+  const user = firebase.auth().currentUser; 
+  if (user != null) {
+    let name = user.displayName;
+    let email = user.email;
+    let uid = user.uid;
+    writeUserData(uid, name, email);
+  }
   return (
     <div>
       <Button variant="warning" onClick={handleShow}>

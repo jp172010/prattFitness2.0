@@ -18,6 +18,15 @@ const goalsSlice = createSlice({
         state.circumferenceGoals[myIndex].goal = goalTarget.goal;
       }
     },
+    currentCircumferenceChanged(state, action) {
+      const goalTarget = action.payload;
+      const myIndex = state.circumferenceGoals.findIndex(
+        (goal) => goal.goalName === goalTarget.goalName
+      );
+      if (myIndex > -1) {
+        state.circumferenceGoals[myIndex].currentGoal = goalTarget.currentGoal;
+      }
+    },
     circumferenceGoalChecked(state, action) {
       const goal = action.payload;
       state.circumferenceGoals.push(goal);
@@ -37,9 +46,8 @@ const goalsSlice = createSlice({
     handleUnitChange(state, action) {
       const payload = action.payload;
       state.unit = payload;
-    },
-    saveCircumferenceGoal(state, action) {
-      const payload = action.payload;
+      console.log(payload)
+      console.log(state.unit)
     },
   },
   extraReducers: {},
@@ -49,6 +57,7 @@ export const {
   circumferenceGoalChecked,
   circumferenceGoalUnchecked,
   circumferenceContentChanged,
+  currentCircumferenceChanged,
   handleGoalClose,
   handleUnitChange,
 } = goalsSlice.actions;

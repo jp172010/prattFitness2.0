@@ -7,10 +7,10 @@ import firebase from "../../Firebase";
 import {
   circumferenceGoalChecked,
   circumferenceGoalUnchecked,
-  circumferenceContentChanged,
   handleGoalClose,
   handleUnitChange,
 } from "./goalsSlice";
+import { CircumferenceForm } from "./circumferenceForm"
 
 const CircumferenceGoalChecked = () => {
   const unit = useSelector((state) => state.goals.unit);
@@ -40,16 +40,11 @@ const CircumferenceGoalChecked = () => {
     if (e.target.checked) {
       let goalName = e.target.name;
       let goal = "";
-      dispatch(circumferenceGoalChecked({ goalName, goal }));
+      let currentGoal = "";
+      dispatch(circumferenceGoalChecked({ goalName, goal, currentGoal }));
     } else {
       dispatch(circumferenceGoalUnchecked(e.target.name));
     }
-  };
-
-  const handleContentChange = (e) => {
-    let goal = e.target.value;
-    let goalName = e.target.name;
-    dispatch(circumferenceContentChanged({ goalName, goal }));
   };
 
   const sendGoal = () => {
@@ -58,10 +53,10 @@ const CircumferenceGoalChecked = () => {
       let userId = user.uid;
       firebase
         .database()
-        .ref("goals/" + userId)
+        .ref("users/" + userId + "/goals/")
         .set({
-          circumferenceGoal: {
-            type: "circumference",
+          Circumference: {
+            type: "Circumference",
             unit: unit,
             goals: goals,
           },
@@ -73,48 +68,9 @@ const CircumferenceGoalChecked = () => {
     }
   };
 
-  const CircumferenceForm = ({ goal }) => {
-    let numbers = [];
-    let options;
-    let i;
-
-    for (i = 0; i < 100; i++) {
-      numbers.push(i);
-    }
-    if (unit === "Metric") {
-      options = numbers.map((number) => (
-        <option key={number} value={number}>
-          {number}cm
-        </option>
-      ));
-    } else {
-      options = numbers.map((number) => (
-        <option key={number} value={number}>
-          {number}"
-        </option>
-      ));
-    }
-
-    return (
-      <Form>
-        <Form.Group>
-          <Form.Label>{goal.goalName}</Form.Label>
-          <Form.Control
-            value={goal.goal}
-            name={goal.goalName}
-            onChange={handleContentChange}
-            as="select"
-          >
-            {options}
-          </Form.Control>
-        </Form.Group>
-      </Form>
-    );
-  };
-
   if (goals.length >= 1) {
     content = goals.map((goal) => (
-      <CircumferenceForm key={goal.goalName} goal={goal} />
+      <CircumferenceForm key={goal.goalName} goal={goal}  unit={unit}/>
     ));
   }
 
@@ -123,7 +79,7 @@ const CircumferenceGoalChecked = () => {
       <Form>
         <Form.Check
           onChange={handleCircumferenceChange}
-          name="circumference"
+          name="Circumference"
           type="checkbox"
           label="Circumference"
         />
