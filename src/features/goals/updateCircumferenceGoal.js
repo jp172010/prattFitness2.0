@@ -10,10 +10,10 @@ import {
   handleGoalClose,
   handleUnitChange,
 } from "./goalsSlice";
-import { deleteGoal } from "../users/usersSlice";
+import { deleteGoal, fetchGoals } from "../users/usersSlice";
 import { CircumferenceForm } from "./circumferenceForm";
 
-export const UpdateCircumferenceGoal = ({ id }) => {
+export const UpdateCircumferenceGoal = () => {
   let content;
   const dispatch = useDispatch();
   const unit = useSelector((state) => state.goals.unit);
@@ -29,7 +29,7 @@ export const UpdateCircumferenceGoal = ({ id }) => {
   const [checkedWaist, setWaistChecked] = useState(false);
   const [checkedThigh, setThighChecked] = useState(false);
   const [checkedCalf, setCalfChecked] = useState(false);
-  const myIndex = goals.findIndex((goal) => goal.id === "Circumference");
+  const myIndex = goals.findIndex((goal) => goal.type === "Circumference");
 
   useEffect(() => {
     commenceCheck();
@@ -38,7 +38,6 @@ export const UpdateCircumferenceGoal = ({ id }) => {
   const checkChecked = (id) => {
     switch (id) {
       case "Neck":
-        console.log("success");
         setNeckChecked(true);
         break;
       case "Chest":
@@ -66,10 +65,8 @@ export const UpdateCircumferenceGoal = ({ id }) => {
 
   const commenceCheck = () => {
     let execute = false;
-    console.log(execute);
     if (!execute) {
       return circumferenceGoals.map((goal) => {
-        console.log(goal);
         let goalName = goal.goalName;
         checkChecked(goalName);
       });
@@ -90,7 +87,6 @@ export const UpdateCircumferenceGoal = ({ id }) => {
       let goalName = items.goalName;
       let goal = items.goal;
       let currentGoal = items.currentGoal;
-      console.log(goalName, goal, currentGoal);
       dispatch(circumferenceGoalChecked({ goalName, goal, currentGoal }));
     }
     setShow(true);
@@ -160,6 +156,7 @@ export const UpdateCircumferenceGoal = ({ id }) => {
     try {
       const user = firebase.auth().currentUser;
       let userId = user.uid;
+      let newState;
       firebase
         .database()
         .ref("users/" + userId + "/goals/Circumference")
@@ -168,8 +165,13 @@ export const UpdateCircumferenceGoal = ({ id }) => {
           unit: unit,
           goals: circumferenceGoals,
         });
-      dispatch(deleteGoal(id));
-      dispatch(handleGoalClose());
+      newState = {
+        type: "Circumference",
+        goals: circumferenceGoals,
+        unit: unit,
+      };
+      dispatch(deleteGoal("Circumference"));
+      dispatch(fetchGoals(newState));
     } catch (err) {
       console.error("Failed to save goal: ", err);
     } finally {

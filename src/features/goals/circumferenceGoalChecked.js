@@ -10,7 +10,7 @@ import {
   handleGoalClose,
   handleUnitChange,
 } from "./goalsSlice";
-import { CircumferenceForm } from "./circumferenceForm"
+import { CircumferenceForm } from "./circumferenceForm";
 
 const CircumferenceGoalChecked = () => {
   const unit = useSelector((state) => state.goals.unit);
@@ -47,30 +47,41 @@ const CircumferenceGoalChecked = () => {
     }
   };
 
-  const sendGoal = () => {
-    try {
-      const user = firebase.auth().currentUser;
-      let userId = user.uid;
-      firebase
-        .database()
-        .ref("users/" + userId + "/goals/")
-        .set({
-          Circumference: {
-            type: "Circumference",
-            unit: unit,
-            goals: goals,
-          },
-        });
-    } catch (err) {
-      console.error("Failed to save goal: ", err);
-    } finally {
-      handleClose();
+  const sendGoal = async () => {
+    for (let items in goals) {
+      console.log(items);
+      if (
+        goals[items].goal == "" ||
+        goals[items].goal == "0" ||
+        goals[items].currentGoal == "" ||
+        goals[items].currentGoal == "0"
+      ) {
+        alert("Please Select A Length More Than 0");
+      } else {
+        try {
+          console.log(goals);
+          const user = firebase.auth().currentUser;
+          let userId = user.uid;
+          firebase
+            .database()
+            .ref("users/" + userId + "/goals/Circumference")
+            .set({
+              type: "Circumference",
+              unit: unit,
+              goals: goals,
+            });
+        } catch (err) {
+          console.error("Failed to save goal: ", err);
+        } finally {
+          handleClose();
+        }
+      }
     }
   };
 
   if (goals.length >= 1) {
     content = goals.map((goal) => (
-      <CircumferenceForm key={goal.goalName} goal={goal}  unit={unit}/>
+      <CircumferenceForm key={goal.goalName} goal={goal} unit={unit} />
     ));
   }
 

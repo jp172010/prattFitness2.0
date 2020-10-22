@@ -1,4 +1,4 @@
-import React, { useContext, useEffect} from "react";
+import React, { useContext, useEffect } from "react";
 import { AuthContext } from "../../Auth.js";
 import "../../app/Landing";
 import { Redirect } from "react-router";
@@ -10,9 +10,10 @@ import "./Home.css";
 import { GoalDropdown } from "../goals/goalDropdown";
 import firebase from "../../Firebase";
 import { useDispatch, useSelector } from "react-redux";
-import { handleGoalClose } from "../goals/goalsSlice"
+import { handleGoalClose } from "../goals/goalsSlice";
 import { userSignIn, fetchGoals, deleteGoal } from "./usersSlice";
 import { UpdateCircumferenceGoal } from "../goals/updateCircumferenceGoal.js";
+import { UpdateWeightGoal } from "../goals/updateWeightGoal";
 
 export const Home = () => {
   const { currentUser } = useContext(AuthContext);
@@ -29,19 +30,37 @@ export const Home = () => {
   let unit;
 
   useEffect(() => {
-    const itemsRef = firebase.database().ref("users/" + uid + "/goals/");
-    itemsRef.on("value", (snapshot) => {
-      let items = snapshot.val();
-      for (let item in items) {
+    const circumferenceRef = firebase
+      .database()
+      .ref("users/" + uid + "/goals/Circumference");
+    circumferenceRef.on("value", (snapshot) => {
+      let item = snapshot.val();
+      if (item !== null) {
         newState = {
           id: item,
-          type: items[item].type,
-          goals: items[item].goals,
-          unit: items[item].unit,
+          type: item.type,
+          goals: item.goals,
+          unit: item.unit,
         };
-        if (newState !== undefined) {
-          dispatch(fetchGoals(newState));
-        }
+      }
+      if (newState !== undefined) {
+        dispatch(fetchGoals(newState));
+      }
+    });
+    const weightRef = firebase.database().ref("users/" + uid + "/goals/Weight");
+    weightRef.on("value", (snapshot) => {
+      let item = snapshot.val();
+      if (item !== null) {
+        newState = {
+          id: item,
+          type: item.type,
+          goals: item.newGoal,
+          current: item.currentGoal,
+          unit: item.unit,
+        };
+      }
+      if (newState !== undefined) {
+        dispatch(fetchGoals(newState));
       }
     });
   }, []);
@@ -57,7 +76,7 @@ export const Home = () => {
   uid = user.uid;
   dispatch(userSignIn({ name, email, photoUrl, emailVerified, uid }));
 
-  const removeItem = (itemId) => {
+  const removeItem = async (itemId) => {
     const itemRef = firebase.database().ref(`users/${uid}/goals/${itemId}`);
     itemRef.remove();
     dispatch(deleteGoal(itemId));
@@ -66,55 +85,112 @@ export const Home = () => {
 
   if (goals.length >= 1) {
     goalArea = goals.map((item) => {
-      if (item.unit === "Metric") {
+      console.log(item);
+      if (item.unit === "Metric" && item.type === "Circumference") {
         unit = "cm";
-      } else if (item.unit === "Imperial") {
+      } else if (item.unit === "Imperial" && item.type === "Circumference") {
         unit = '"';
+      } else if (item.unit === "Metric" && item.type === "Weight") {
+        unit = "kg";
+      } else if (item.unit === "Imperial" && item.type === "Weight") {
+        unit = "lb";
       }
-
-      return (
-        <Container key={item.goals.id} className="goal">
-          <Row className="justify-content-md-center">
-            <Col xs={12}>
-              <h4>{item.type}</h4>
-            </Col>
-            <Col xs={6}>
-              <ul>
-                {item.goals.map((item) => {
-                  return (
-                    <li key={item.id}>
-                      <Container key={item.goalName}>
-                        <Row>
-                          <Col xs={12}>{item.goalName}</Col>
-                          <Col>
-                            Current: &nbsp;
-                            {item.currentGoal}
-                            {unit}
-                          </Col>
-                          <Col>
-                            Goal: &nbsp;
-                            {item.goal}
-                            {unit}
-                          </Col>
-                        </Row>
-                      </Container>
-                    </li>
-                  );
-                })}
-              </ul>
-            </Col>
-            <Col xs={6}>
-              <UpdateCircumferenceGoal id={item.id}/>
-            </Col>
-            <Col xs={6} />
-            <Col xs={6}>
-              <Button variant="danger" onClick={() => removeItem(item.id)}>
+      if (item.type === "Circumference") {
+        return (
+          <Container key={item.goals.id} className="goal">
+            <Row className="justify-content-md-center">
+              <Col xs={12}>
+                <h3>{item.type}</h3>
+              </Col>
+              <Col xs={6}>
+                <ul>
+                  {item.goals.map((item) => {
+                    const currentGoalNumber = parseInt(item.currentGoal);
+                    const goalNumber = parseInt(item.goal);
+                    const numberToGoal = goalNumber - currentGoalNumber;
+                    return (
+                      <li key={item.id}>
+                        <Container key={item.goalName}>
+                          <Row>
+                            <Col xs={12}>
+                              <h5>{item.goalName}</h5>
+                            </Col>
+                            <Col>
+                              Current: &nbsp;
+                              {item.currentGoal}
+                              {unit}
+                            </Col>
+                            <Col>
+                              Goal: &nbsp;
+                              {item.goal}
+                              {unit}
+                            </Col>
+                            <Col>
+                              Remaining: &nbsp;
+                              {numberToGoal}
+                              {unit}
+                            </Col>
+                          </Row>
+                        </Container>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </Col>
+              <Col xs={6}>
+                <UpdateCircumferenceGoal />
+              </Col>
+              <Col xs={6} />
+              <Col xs={6}>
+                <Button variant="danger" onClick={() => removeItem(item.type)}>
+                  Delete
+                </Button>
+              </Col>
+            </Row>
+          </Container>
+        );
+      }
+      if (item.type === "Weight") {
+        const currentGoalNumber = parseInt(item.current);
+        const goalNumber = parseInt(item.goals);
+        const numberToGoal = goalNumber - currentGoalNumber;
+        return (
+          <Container key={item.id} className="goal">
+            <Row className="justify-content-md-center">
+              <Col xs={12}>
+                <h3>{item.type}</h3>
+              </Col>
+              <Col>
+                <Row>
+                  <Col xs={12}>{item.goalName}</Col>
+                  <Col>
+                    Current: &nbsp;
+                    {item.current}
+                    {unit}
+                  </Col>
+                  <Col>
+                    Goal: &nbsp;
+                    {item.goals}
+                    {unit}
+                  </Col>
+                  <Col>
+                    Remaining: &nbsp;
+                    {numberToGoal}
+                    {unit}
+                  </Col>
+                </Row>
+              </Col>
+              <Col xs={7} >
+                <UpdateWeightGoal />
+              </Col>
+              <Col xs={5} />
+              <Button variant="danger" onClick={() => removeItem(item.type)}>
                 Delete
               </Button>
-            </Col>
-          </Row>
-        </Container>
-      );
+            </Row>
+          </Container>
+        );
+      }
     });
   }
 

@@ -1,6 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+  weight: {
+    currentWeight: undefined,
+    goalWeight: undefined,
+    goalName: "Weight",
+  },
   circumferenceGoals: [],
   unit: "Metric",
 };
@@ -9,6 +14,16 @@ const goalsSlice = createSlice({
   name: "goals",
   initialState,
   reducers: {
+    weightContentChanged(state, action) {
+      const payload = action.payload;
+      console.log(payload)
+      state.weight.goalWeight = payload.goal;
+    },
+    currentWeightChanged(state, action) {
+      const payload = action.payload;
+      console.log(payload)
+      state.weight.currentWeight = payload.currentGoal;
+    },
     circumferenceContentChanged(state, action) {
       const goalTarget = action.payload;
       const myIndex = state.circumferenceGoals.findIndex(
@@ -41,19 +56,24 @@ const goalsSlice = createSlice({
       }
     },
     handleGoalClose(state, action) {
+      state.weight = {
+        currentWeight: undefined,
+        goalWeight: undefined,
+        goalName: "Weight",
+      };
       state.circumferenceGoals = [];
     },
     handleUnitChange(state, action) {
       const payload = action.payload;
       state.unit = payload;
-      console.log(payload)
-      console.log(state.unit)
     },
   },
   extraReducers: {},
 });
 
 export const {
+  weightContentChanged,
+  currentWeightChanged,
   circumferenceGoalChecked,
   circumferenceGoalUnchecked,
   circumferenceContentChanged,

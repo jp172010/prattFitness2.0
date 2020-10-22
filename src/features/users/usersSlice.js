@@ -11,11 +11,18 @@ const usersSlice = createSlice({
   reducers: {
     fetchGoals(state, action) {
       const payload = action.payload;
-      state.goals.push(payload);
+      console.log(payload)
+      const myIndex = state.goals.findIndex(
+        (goals) => goals.type === payload.type
+      );
+      console.log(myIndex)
+      if (myIndex == -1) {
+        state.goals.push(payload);
+      }
     },
     deleteGoal(state, action) {
       const payload = action.payload;
-      const myIndex = state.goals.findIndex((goals) => goals.id === payload);
+      const myIndex = state.goals.findIndex((goals) => goals.type === payload);
       if (myIndex > -1) {
         state.goals.splice(myIndex, 1);
       }
@@ -35,7 +42,7 @@ const usersSlice = createSlice({
       const myIndex = state.users.findIndex((users) => users.uid === payload);
       if (myIndex > -1) {
         state.users.splice(myIndex, 1);
-        state.goals = []
+        state.goals = [];
       }
     },
   },
