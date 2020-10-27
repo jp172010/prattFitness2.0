@@ -4,13 +4,18 @@ import { Form } from "react-bootstrap";
 import CircumferenceGoalChecked from "./circumferenceGoalChecked";
 import { useSelector } from "react-redux";
 import { WeightGoalChecked } from "./weightGoalChecked";
+import {BodyFatGoalChecked} from "./bodyFatGoalChecked"
 
 export const GoalDropdown = () => {
   let circumference;
   let weight;
+  let bodyFat;
   const goals = useSelector((state) => state.users.goals);
   const circumferenceIndex = goals.findIndex(
     (goal) => goal.type === "Circumference"
+  );
+  const bodyFatIndex = goals.findIndex(
+    (goal) => goal.type === "BodyFat"
   );
   const weightIndex = goals.findIndex((goal) => goal.type === "Weight");
   if (circumferenceIndex === -1) {
@@ -18,6 +23,9 @@ export const GoalDropdown = () => {
   }
   if (weightIndex === -1) {
     weight = <WeightGoalChecked />;
+  }
+  if (bodyFatIndex === -1) {
+    bodyFat = <BodyFatGoalChecked />;
   }
   return (
     <Dropdown>
@@ -27,12 +35,11 @@ export const GoalDropdown = () => {
       <Dropdown.Menu rootCloseEvent="click" id="filterMenu">
         {circumference}
         {weight}
+        {bodyFat}
         <Form>
           <Form.Group controlId="formBasicCheckbox">
-            <Form.Check name="bodyFat" type="checkbox" label="Body Fat %" />
             <Form.Check name="movement" type="checkbox" label="Movement" />
             <Form.Check name="dietary" type="checkbox" label="Dietary" />
-            <Form.Check name="life" type="checkbox" label="Life" />
           </Form.Group>
         </Form>
       </Dropdown.Menu>

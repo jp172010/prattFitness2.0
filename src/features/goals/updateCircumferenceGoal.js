@@ -15,6 +15,8 @@ import { CircumferenceForm } from "./circumferenceForm";
 
 export const UpdateCircumferenceGoal = () => {
   let content;
+  const user = firebase.auth().currentUser;
+  const uid = user.uid;
   const dispatch = useDispatch();
   const unit = useSelector((state) => state.goals.unit);
   const goals = useSelector((state) => state.users.goals);
@@ -152,30 +154,53 @@ export const UpdateCircumferenceGoal = () => {
     }
   };
 
-  const sendGoal = () => {
-    try {
-      const user = firebase.auth().currentUser;
-      let userId = user.uid;
-      let newState;
-      firebase
-        .database()
-        .ref("users/" + userId + "/goals/Circumference")
-        .set({
-          type: "Circumference",
-          unit: unit,
-          goals: circumferenceGoals,
-        });
-      newState = {
-        type: "Circumference",
-        goals: circumferenceGoals,
-        unit: unit,
-      };
+  const removeItem = async (itemId) => {
+    const itemRef = firebase.database().ref(`users/${uid}/goals/${itemId}`);
+    itemRef.remove();
+    dispatch(deleteGoal(itemId));
+    dispatch(handleGoalClose());
+  };
+
+  const sendGoal = async () => {
+    if (circumferenceGoals.length === 0) {
       dispatch(deleteGoal("Circumference"));
-      dispatch(fetchGoals(newState));
-    } catch (err) {
-      console.error("Failed to save goal: ", err);
-    } finally {
-      handleClose();
+      removeItem("Circumference");
+    } else {
+      for (let items in circumferenceGoals) {
+        if (
+          circumferenceGoals[items].goal === "" ||
+          circumferenceGoals[items].goal === "0" ||
+          circumferenceGoals[items].currentGoal === "" ||
+          circumferenceGoals[items].currentGoal === "0"
+        ) {
+          alert("Please Select A Length More Than 0");
+          return
+        }
+      }
+      try {
+        const user = firebase.auth().currentUser;
+        let userId = user.uid;
+        let newState;
+        firebase
+          .database()
+          .ref("users/" + userId + "/goals/Circumference")
+          .set({
+            type: "Circumference",
+            unit: unit,
+            goals: circumferenceGoals,
+          });
+        newState = {
+          type: "Circumference",
+          goals: circumferenceGoals,
+          unit: unit,
+        };
+        dispatch(deleteGoal("Circumference"));
+        dispatch(fetchGoals(newState));
+      } catch (err) {
+        console.error("Failed to save goal: ", err);
+      } finally {
+        handleClose();
+      }
     }
   };
 

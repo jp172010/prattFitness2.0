@@ -5,20 +5,18 @@ import Modal from "react-bootstrap/Modal";
 import { useSelector, useDispatch } from "react-redux";
 import firebase from "../../Firebase";
 import {
-  currentWeightChanged,
-  weightContentChanged,
+  currentBodyFatChanged,
+  bodyFatContentChanged,
   handleGoalClose,
-  handleUnitChange,
 } from "./goalsSlice";
 import { deleteGoal } from "../users/usersSlice";
 
-export const UpdateWeightGoal = () => {
+export const UpdateBodyFatGoal = () => {
   const dispatch = useDispatch();
   const [show, setShow] = useState(false);
-  const unit = useSelector((state) => state.goals.unit);
-  const goals = useSelector((state) => state.goals.weight);
+  const goals = useSelector((state) => state.goals.bodyFat);
   const userGoals = useSelector((state) => state.users.goals);
-  const myIndex = userGoals.findIndex((goal) => goal.type === "Weight");
+  const myIndex = userGoals.findIndex((goal) => goal.type === "BodyFat");
   let numbers = [];
   let options;
   let i;
@@ -26,67 +24,50 @@ export const UpdateWeightGoal = () => {
   for (i = 0; i < 400; i++) {
     numbers.push(i);
   }
-
-  if (unit === "Metric") {
-    options = numbers.map((number) => (
-      <option key={number} value={number}>
-        {number}kg
-      </option>
-    ));
-  } else {
-    options = numbers.map((number) => (
-      <option key={number} value={number}>
-        {number}lb
-      </option>
-    ));
-  }
+  options = numbers.map((number) => (
+    <option key={number} value={number}>
+      {number}%
+    </option>
+  ));
 
   const handleShow = async () => {
-    let weightUnit = userGoals[myIndex].unit;
     let currentGoal = userGoals[myIndex].current;
     let goal = userGoals[myIndex].goals;
-    dispatch(handleUnitChange(weightUnit));
-    dispatch(currentWeightChanged({ currentGoal }));
-    dispatch(weightContentChanged({ goal }));
+    dispatch(currentBodyFatChanged({ currentGoal }));
+    dispatch(bodyFatContentChanged({ goal }));
     setShow(true);
-  };
-
-  const handleUnit = (e) => {
-    let name = e.target.value;
-    dispatch(handleUnitChange(name));
   };
 
   const handleCurrentChange = (e) => {
     let currentGoal = e.target.value;
-    dispatch(currentWeightChanged({ currentGoal }));
+    dispatch(currentBodyFatChanged({ currentGoal }));
   };
 
   const handleContentChange = (e) => {
     let goal = e.target.value;
-    dispatch(weightContentChanged({ goal }));
+    dispatch(bodyFatContentChanged({ goal }));
   };
 
   const sendGoal = async () => {
-    if (
-      goals.goalWeight === undefined ||
-      goals.goalWeight === "0" ||
-      goals.currentWeight === undefined ||
-      goals.currentWeight === "0"
+     if (
+      goals.goalBodyFat === undefined ||
+      goals.goalBodyFat === "0" ||
+      goals.currentBodyFat === undefined ||
+      goals.currentBodyFat === "0"
     ) {
-      alert("Please Select A Weight More Than 0");
+      alert("Please Select A Percentage More Than 0");
     } else {
       try {
         const user = firebase.auth().currentUser;
         let userId = user.uid;
-        dispatch(deleteGoal("Weight"));
+        dispatch(deleteGoal("BodyFat"));
         firebase
           .database()
-          .ref("users/" + userId + "/goals/Weight")
+          .ref("users/" + userId + "/goals/BodyFat")
           .set({
-            type: "Weight",
-            unit: unit,
-            currentGoal: goals.currentWeight,
-            newGoal: goals.goalWeight,
+            type: "BodyFat",
+            currentGoal: goals.currentBodyFat,
+            newGoal: goals.goalBodyFat,
           });
       } catch (err) {
         console.error("Failed to save goal: ", err);
@@ -113,29 +94,18 @@ export const UpdateWeightGoal = () => {
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group controlId="exampleForm.ControlSelect1">
-              <Form.Label>Choose Unit of Length</Form.Label>
-              <Form.Control value={unit} onChange={handleUnit} as="select">
-                <option value="Metric" name="Metric">
-                  Metric
-                </option>
-                <option value="Imperial" name="Imperial">
-                  Imperial
-                </option>
-              </Form.Control>
-            </Form.Group>
             <Form.Group>
-              <Form.Label>Current Weight</Form.Label>
+              <Form.Label>Current Body Fat</Form.Label>
               <Form.Control
-                value={goals.currentWeight}
+                value={goals.currentBodyFat}
                 onChange={handleCurrentChange}
                 as="select"
               >
                 {options}
               </Form.Control>
-              <Form.Label>Goal Weight</Form.Label>
+              <Form.Label>Goal Body Fat</Form.Label>
               <Form.Control
-                value={goals.goalWeight}
+                value={goals.goalBodyFat}
                 onChange={handleContentChange}
                 as="select"
               >

@@ -14,6 +14,7 @@ import { handleGoalClose } from "../goals/goalsSlice";
 import { userSignIn, fetchGoals, deleteGoal } from "./usersSlice";
 import { UpdateCircumferenceGoal } from "../goals/updateCircumferenceGoal.js";
 import { UpdateWeightGoal } from "../goals/updateWeightGoal";
+import { UpdateBodyFatGoal } from "../goals/updateBodyFatGoal";
 
 export const Home = () => {
   const { currentUser } = useContext(AuthContext);
@@ -30,37 +31,46 @@ export const Home = () => {
   let unit;
 
   useEffect(() => {
-    const circumferenceRef = firebase
+    const goalsRef = firebase
       .database()
-      .ref("users/" + uid + "/goals/Circumference");
-    circumferenceRef.on("value", (snapshot) => {
+      .ref("users/" + uid + "/goals");
+    goalsRef.on("value", (snapshot) => {
       let item = snapshot.val();
       if (item !== null) {
-        newState = {
-          id: item,
-          type: item.type,
-          goals: item.goals,
-          unit: item.unit,
-        };
-      }
-      if (newState !== undefined) {
-        dispatch(fetchGoals(newState));
-      }
-    });
-    const weightRef = firebase.database().ref("users/" + uid + "/goals/Weight");
-    weightRef.on("value", (snapshot) => {
-      let item = snapshot.val();
-      if (item !== null) {
-        newState = {
-          id: item,
-          type: item.type,
-          goals: item.newGoal,
-          current: item.currentGoal,
-          unit: item.unit,
-        };
-      }
-      if (newState !== undefined) {
-        dispatch(fetchGoals(newState));
+        for(let items in item){
+          if(item[items].type === "Circumference"){
+            newState = {
+              
+              type: item[items].type,
+              goals: item[items].goals,
+              unit: item[items].unit,
+            };
+            if (newState !== undefined) {
+              dispatch(fetchGoals(newState));
+            }
+          }else if(item[items].type === "Weight"){
+            newState = {
+              
+              type: item[items].type,
+              goals: item[items].newGoal,
+              current: item[items].currentGoal,
+              unit: item[items].unit,
+            };
+            if (newState !== undefined) {
+              dispatch(fetchGoals(newState));
+            }
+          }else if(item[items].type === "BodyFat"){
+            newState = {
+              
+              type: item[items].type,
+              goals: item[items].newGoal,
+              current: item[items].currentGoal,
+            };
+            if (newState !== undefined) {
+              dispatch(fetchGoals(newState));
+            }
+          }
+        }
       }
     });
   }, []);
@@ -85,7 +95,6 @@ export const Home = () => {
 
   if (goals.length >= 1) {
     goalArea = goals.map((item) => {
-      console.log(item);
       if (item.unit === "Metric" && item.type === "Circumference") {
         unit = "cm";
       } else if (item.unit === "Imperial" && item.type === "Circumference") {
@@ -127,8 +136,10 @@ export const Home = () => {
                             </Col>
                             <Col>
                               Remaining: &nbsp;
-                              {numberToGoal}
-                              {unit}
+                              <span style={{ color: "red" }}>
+                                {numberToGoal}
+                                {unit}
+                              </span>
                             </Col>
                           </Row>
                         </Container>
@@ -175,13 +186,56 @@ export const Home = () => {
                   </Col>
                   <Col>
                     Remaining: &nbsp;
-                    {numberToGoal}
-                    {unit}
+                    <span style={{ color: "red" }}>
+                      {numberToGoal}
+                      {unit}
+                    </span>
                   </Col>
                 </Row>
               </Col>
-              <Col xs={7} >
+              <Col xs={7}>
                 <UpdateWeightGoal />
+              </Col>
+              <Col xs={5} />
+              <Button variant="danger" onClick={() => removeItem(item.type)}>
+                Delete
+              </Button>
+            </Row>
+          </Container>
+        );
+      }
+      if (item.type === "BodyFat") {
+        const currentGoalNumber = parseInt(item.current);
+        const goalNumber = parseInt(item.goals);
+        const numberToGoal = goalNumber - currentGoalNumber;
+        return (
+          <Container key={item.id} className="goal">
+            <Row className="justify-content-md-center">
+              <Col xs={12}>
+                <h3>{item.type}</h3>
+              </Col>
+              <Col>
+                <Row>
+                  <Col xs={12}>{item.goalName}</Col>
+                  <Col>
+                    Current: &nbsp;
+                    {item.current}
+                    %
+                  </Col>
+                  <Col>
+                    Goal: &nbsp;
+                    {item.goals}
+                    %
+                  </Col>
+                  Remaining: &nbsp;
+                  <span style={{ color: "red" }}>
+                      {numberToGoal}
+                      %
+                    </span>
+                </Row>
+              </Col>
+              <Col xs={7}>
+                <UpdateBodyFatGoal />
               </Col>
               <Col xs={5} />
               <Button variant="danger" onClick={() => removeItem(item.type)}>

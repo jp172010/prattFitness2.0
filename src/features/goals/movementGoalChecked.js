@@ -5,16 +5,16 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import firebase from "../../Firebase";
 import {
-  circumferenceGoalChecked,
-  circumferenceGoalUnchecked,
+  movementGoalChecked,
+  movementGoalUnchecked,
   handleGoalClose,
   handleUnitChange,
 } from "./goalsSlice";
-import { CircumferenceForm } from "./circumferenceForm";
+import { MovementForm } from "./movementForm";
 
-const CircumferenceGoalChecked = () => {
+const MovementGoalChecked = () => {
   const unit = useSelector((state) => state.goals.unit);
-  const goals = useSelector((state) => state.goals.circumferenceGoals);
+  const goals = useSelector((state) => state.goals.movementGoals);
   const dispatch = useDispatch();
   const [show, setShow] = useState(false);
   let content;
@@ -24,7 +24,7 @@ const CircumferenceGoalChecked = () => {
     dispatch(handleUnitChange(name));
   };
 
-  const handleCircumferenceChange = (e) => {
+  const handleMovementChange = (e) => {
     if (e.target.checked) {
       setShow(true);
       e.target.checked = false;
@@ -41,9 +41,9 @@ const CircumferenceGoalChecked = () => {
       let goalName = e.target.name;
       let goal = "";
       let currentGoal = "";
-      dispatch(circumferenceGoalChecked({ goalName, goal, currentGoal }));
+      dispatch(movementGoalChecked({ goalName, goal, currentGoal }));
     } else {
-      dispatch(circumferenceGoalUnchecked(e.target.name));
+      dispatch(movementGoalUnchecked(e.target.name));
     }
   };
 
@@ -64,9 +64,9 @@ const CircumferenceGoalChecked = () => {
       let userId = user.uid;
       firebase
         .database()
-        .ref("users/" + userId + "/goals/Circumference")
+        .ref("users/" + userId + "/goals/Movement")
         .set({
-          type: "Circumference",
+          type: "Movement",
           unit: unit,
           goals: goals,
         });
@@ -79,7 +79,7 @@ const CircumferenceGoalChecked = () => {
 
   if (goals.length >= 1) {
     content = goals.map((goal) => (
-      <CircumferenceForm key={goal.goalName} goal={goal} unit={unit} />
+      <MovementForm key={goal.goalName} goal={goal} unit={unit} />
     ));
   }
 
@@ -87,10 +87,10 @@ const CircumferenceGoalChecked = () => {
     <div>
       <Form>
         <Form.Check
-          onChange={handleCircumferenceChange}
-          name="Circumference"
+          onChange={handleMovementChange}
+          name="Movement"
           type="checkbox"
-          label="Circumference"
+          label="Movement"
         />
       </Form>
 
@@ -171,4 +171,4 @@ const CircumferenceGoalChecked = () => {
     </div>
   );
 };
-export default CircumferenceGoalChecked;
+export default MovementGoalChecked;

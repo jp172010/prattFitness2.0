@@ -6,6 +6,11 @@ const initialState = {
     goalWeight: undefined,
     goalName: "Weight",
   },
+  bodyFat: {
+    currentBodyFat: undefined,
+    goalBodyFat: undefined,
+    goalName: "Body Fat",
+  },
   circumferenceGoals: [],
   unit: "Metric",
 };
@@ -14,6 +19,16 @@ const goalsSlice = createSlice({
   name: "goals",
   initialState,
   reducers: {
+    bodyFatContentChanged(state, action) {
+      const payload = action.payload;
+      console.log(payload)
+      state.bodyFat.goalBodyFat = payload.goal;
+    },
+    currentBodyFatChanged(state, action) {
+      const payload = action.payload;
+      console.log(payload)
+      state.bodyFat.currentBodyFat = payload.currentGoal;
+    },
     weightContentChanged(state, action) {
       const payload = action.payload;
       console.log(payload)
@@ -56,6 +71,11 @@ const goalsSlice = createSlice({
       }
     },
     handleGoalClose(state, action) {
+      state.bodyFat ={
+        currentBodyFat: undefined,
+        goalBodyFat: undefined,
+        goalName: "Body Fat",
+      };
       state.weight = {
         currentWeight: undefined,
         goalWeight: undefined,
@@ -72,6 +92,8 @@ const goalsSlice = createSlice({
 });
 
 export const {
+  bodyFatContentChanged,
+  currentBodyFatChanged,
   weightContentChanged,
   currentWeightChanged,
   circumferenceGoalChecked,

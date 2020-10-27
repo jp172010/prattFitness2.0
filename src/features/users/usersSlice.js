@@ -11,12 +11,10 @@ const usersSlice = createSlice({
   reducers: {
     fetchGoals(state, action) {
       const payload = action.payload;
-      console.log(payload)
       const myIndex = state.goals.findIndex(
         (goals) => goals.type === payload.type
       );
-      console.log(myIndex)
-      if (myIndex == -1) {
+      if (myIndex === -1) {
         state.goals.push(payload);
       }
     },

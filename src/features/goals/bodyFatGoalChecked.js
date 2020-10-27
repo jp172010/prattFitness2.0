@@ -5,24 +5,17 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import firebase from "../../Firebase";
 import {
-  currentWeightChanged,
-  weightContentChanged,
+  currentBodyFatChanged,
+  bodyFatContentChanged,
   handleGoalClose,
-  handleUnitChange,
 } from "./goalsSlice";
 
-export const WeightGoalChecked = () => {
-  const unit = useSelector((state) => state.goals.unit);
-  const goals = useSelector((state) => state.goals.weight);
+export const BodyFatGoalChecked = () => {
+  const goals = useSelector((state) => state.goals.bodyFat);
   const dispatch = useDispatch();
   const [show, setShow] = useState(false);
 
-  const handleUnit = (e) => {
-    let name = e.target.value;
-    dispatch(handleUnitChange(name));
-  };
-
-  const handleWeightChange = (e) => {
+  const handleBodyFatChange = (e) => {
     if (e.target.checked) {
       setShow(true);
       e.target.checked = false;
@@ -37,24 +30,23 @@ export const WeightGoalChecked = () => {
   const sendGoal = () => {
     console.log(goals);
     if (
-      goals.goalWeight === undefined ||
-      goals.goalWeight === "0" ||
-      goals.currentWeight === undefined ||
-      goals.currentWeight === "0"
+      goals.goalBodyFat === undefined ||
+      goals.goalBodyFat === "0" ||
+      goals.currentBodyFat === undefined ||
+      goals.currentBodyFat === "0"
     ) {
-      alert("Please Select A Weight More Than 0");
+      alert("Please Select A Percentage More Than 0");
     } else {
       try {
         const user = firebase.auth().currentUser;
         let userId = user.uid;
         firebase
           .database()
-          .ref("users/" + userId + "/goals/Weight")
+          .ref("users/" + userId + "/goals/BodyFat")
           .set({
-            type: "Weight",
-            unit: unit,
-            currentGoal: goals.currentWeight,
-            newGoal: goals.goalWeight,
+            type: "BodyFat",
+            currentGoal: goals.currentBodyFat,
+            newGoal: goals.goalBodyFat,
           });
       } catch (err) {
         console.error("Failed to save goal: ", err);
@@ -68,41 +60,34 @@ export const WeightGoalChecked = () => {
   let options;
   let i;
 
-  for (i = 0; i < 400; i++) {
+  for (i = 0; i < 100; i++) {
     numbers.push(i);
   }
-  if (unit === "Metric") {
     options = numbers.map((number) => (
       <option key={number} value={number}>
-        {number}kg
+        {number}%
       </option>
     ));
-  } else {
-    options = numbers.map((number) => (
-      <option key={number} value={number}>
-        {number}lb
-      </option>
-    ));
-  }
+  
 
   const handleCurrentChange = (e) => {
     let currentGoal = e.target.value;
-    dispatch(currentWeightChanged({ currentGoal }));
+    dispatch(currentBodyFatChanged({ currentGoal }));
   };
 
   const handleContentChange = (e) => {
     let goal = e.target.value;
-    dispatch(weightContentChanged({ goal }));
+    dispatch(bodyFatContentChanged({ goal }));
   };
 
   return (
     <div>
       <Form>
         <Form.Check
-          onChange={handleWeightChange}
-          name="Weight"
+          onChange={handleBodyFatChange}
+          name="Body Fat"
           type="checkbox"
-          label="Weight"
+          label="Body Fat"
         />
       </Form>
 
@@ -112,19 +97,8 @@ export const WeightGoalChecked = () => {
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group controlId="exampleForm.ControlSelect1">
-              <Form.Label>Choose Unit of Length</Form.Label>
-              <Form.Control value={unit} onChange={handleUnit} as="select">
-                <option value="Metric" name="Metric">
-                  Metric
-                </option>
-                <option value="Imperial" name="Imperial">
-                  Imperial
-                </option>
-              </Form.Control>
-            </Form.Group>
             <Form.Group>
-              <Form.Label>Current Weight</Form.Label>
+              <Form.Label>Current Body Fat</Form.Label>
               <Form.Control
                 value={goals.currentGoal}
                 name={goals.goalName}
@@ -133,7 +107,7 @@ export const WeightGoalChecked = () => {
               >
                 {options}
               </Form.Control>
-              <Form.Label>Goal Weight</Form.Label>
+              <Form.Label>Goal Body Fat</Form.Label>
               <Form.Control
                 value={goals.goal}
                 name={goals.goalName}
