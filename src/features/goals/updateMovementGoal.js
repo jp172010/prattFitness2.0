@@ -126,6 +126,8 @@ export const UpdateMovementGoal = () => {
       let weighted = items.weighted;
       let currentWeight = items.currentWeight;
       let goalWeight = items.goalWeight;
+      let goal1RM = items.goal1RM;
+      let current1RM = items.current1RM;
       dispatch(
         movementGoalChecked({
           goalName,
@@ -134,6 +136,8 @@ export const UpdateMovementGoal = () => {
           weighted,
           currentWeight,
           goalWeight,
+          goal1RM,
+          current1RM,
         })
       );
     }

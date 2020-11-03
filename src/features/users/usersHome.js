@@ -267,6 +267,45 @@ export const Home = () => {
                         </li>
                       );
                     }
+                    if (item.goalName === "Squat") {
+                      return (
+                        <li key={item.id}>
+                          <Container key={item.goalName}>
+                            <Row>
+                              <Col xs={12}>
+                                <h5>{item.goalName}</h5>
+                              </Col>
+                              <Col>
+                                Current One Rep Max: &nbsp;
+                                {item.current1RM}
+                              </Col>
+                              <Col>
+                                Goal One Rep Max: &nbsp;
+                                {item.goal1RM}
+                              </Col>
+                              <Col>
+                                Weight: &nbsp;
+                                {item.currentWeight}
+                              </Col>
+                              <Col>
+                                Current Reps: &nbsp;
+                                {item.currentRepetitions}
+                              </Col>
+                              <Col>
+                                Goal: &nbsp;
+                                {item.goalRepetitions}
+                              </Col>
+                              <Col>
+                                Remaining: &nbsp;
+                                <span style={{ color: "red" }}>
+                                  {numberToGoal}
+                                </span>
+                              </Col>
+                            </Row>
+                          </Container>
+                        </li>
+                      );
+                    }
                   })}
                 </ul>
               </Col>

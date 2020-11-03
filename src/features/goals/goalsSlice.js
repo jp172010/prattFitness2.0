@@ -81,6 +81,26 @@ const goalsSlice = createSlice({
           goalTarget.goalRepetitions;
       }
     },
+    current1RMChanged(state, action) {
+      const goalTarget = action.payload;
+      const myIndex = state.movementGoals.findIndex(
+        (goal) => goal.goalName === goalTarget.goalName
+      );
+      if (myIndex > -1) {
+        state.movementGoals[myIndex].current1RM =
+          goalTarget.current1RM;
+      }
+    },
+    goal1RMChanged(state, action) {
+      const goalTarget = action.payload;
+      const myIndex = state.movementGoals.findIndex(
+        (goal) => goal.goalName === goalTarget.goalName
+      );
+      if (myIndex > -1) {
+        state.movementGoals[myIndex].goal1RM =
+          goalTarget.goal1RM;
+      }
+    },
     movementWeightChanged(state, action) {
       const goalTarget = action.payload;
       const myIndex = state.movementGoals.findIndex(
@@ -100,7 +120,7 @@ const goalsSlice = createSlice({
           goalTarget.currentRepetitions;
       }
     },
-    pullUpWeightChanged(state, action) {
+    weightChanged(state, action) {
       const goalTarget = action.payload;
       const myIndex = state.movementGoals.findIndex(
         (goal) => goal.goalName === goalTarget.goalName
@@ -172,6 +192,17 @@ const goalsSlice = createSlice({
         };
         state.movementGoals.push(sitUp);
       }
+      if (goal.goalName === "Squat") {
+        let squat = {
+          goalName: "Squat",
+          current1RM: goal.current1RM,
+          goal1RM: goal.goal1RM,
+          currentWeight: goal.currentWeight,
+          currentRepetitions: goal.currentRepetitions,
+          goalRepetitions: goal.goalRepetitions,
+        };
+        state.movementGoals.push(squat);
+      }
     },
     handleGoalClose(state, action) {
       state.bodyFat = {
@@ -213,7 +244,9 @@ export const {
   weightedUnchecked,
   handleGoalClose,
   handleUnitChange,
-  pullUpWeightChanged,
+  weightChanged,
+  goal1RMChanged,
+  current1RMChanged,
 } = goalsSlice.actions;
 
 export default goalsSlice.reducer;

@@ -4,15 +4,16 @@ import {
   movementRepetitionsChanged,
   currentRepetitionsChanged,
   movementWeightChanged,
-  pullUpWeightChanged,
+  weightChanged,
   weightedChecked,
   weightedUnchecked,
   handleUnitChange,
+  current1RMChanged,
+  goal1RMChanged,
 } from "./goalsSlice";
-import { useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export const MovementForm = ({ goal }) => {
-
   const unit = useSelector((state) => state.goals.unit);
   const dispatch = useDispatch();
   let content;
@@ -30,12 +31,22 @@ export const MovementForm = ({ goal }) => {
   const currentWeightChange = (e) => {
     let currentWeight = e.target.value;
     let goalName = e.target.name;
-    dispatch(pullUpWeightChanged({ goalName, currentWeight }));
+    dispatch(weightChanged({ goalName, currentWeight }));
   };
   const currentRepetitionChange = (e) => {
     let currentRepetitions = e.target.value;
     let goalName = e.target.name;
     dispatch(currentRepetitionsChanged({ goalName, currentRepetitions }));
+  };
+  const current1RMChange = (e) => {
+    let current1RM = e.target.value;
+    let goalName = e.target.name;
+    dispatch(current1RMChanged({ goalName, current1RM }));
+  };
+  const goal1RMChange = (e) => {
+    let goal1RM = e.target.value;
+    let goalName = e.target.name;
+    dispatch(goal1RMChanged({ goalName, goal1RM }));
   };
   const handleUnit = (e) => {
     let name = e.target.value;
@@ -43,7 +54,6 @@ export const MovementForm = ({ goal }) => {
   };
 
   const WeightedForm = () => {
-
     if (unit === "Metric") {
       options = numbers.map((number) => (
         <option key={number} value={number}>
@@ -61,16 +71,16 @@ export const MovementForm = ({ goal }) => {
     return (
       <Form>
         <Form.Group controlId="exampleForm.ControlSelect1">
-              <Form.Label>Choose Unit of Measurement</Form.Label>
-              <Form.Control value={unit} onChange={handleUnit} as="select">
-                <option value="Metric" name="Metric">
-                  Metric
-                </option>
-                <option value="Imperial" name="Imperial">
-                  Imperial
-                </option>
-              </Form.Control>
-            </Form.Group>
+          <Form.Label>Choose Unit of Measurement</Form.Label>
+          <Form.Control value={unit} onChange={handleUnit} as="select">
+            <option value="Metric" name="Metric">
+              Metric
+            </option>
+            <option value="Imperial" name="Imperial">
+              Imperial
+            </option>
+          </Form.Control>
+        </Form.Group>
         <Form.Group>
           <Form.Label>Current Achievable Weight</Form.Label>
           <Form.Control
@@ -95,7 +105,7 @@ export const MovementForm = ({ goal }) => {
     );
   };
 
-  if(goal.weighted === true){
+  if (goal.weighted === true) {
     content = <WeightedForm />;
   }
 
@@ -108,10 +118,21 @@ export const MovementForm = ({ goal }) => {
   };
 
   let numbers = [];
+  let reps = [];
+  let repOptions;
   let options;
   let i;
 
-  for (i = 0; i < 200; i++) {
+  for (i = 0; i < 100; i++) {
+   reps.push(i);
+  }
+  repOptions = reps.map((number) => (
+    <option key={number} value={number}>
+      {number}
+    </option>
+  ));
+
+  for (i = 0; i < 1000; i++) {
     numbers.push(i);
   }
   options = numbers.map((number) => (
@@ -203,6 +224,86 @@ export const MovementForm = ({ goal }) => {
             as="select"
           >
             {options}
+          </Form.Control>
+        </Form.Group>
+      </Form>
+    );
+  }
+  if (goal.goalName === "Squat") {
+    if (unit === "Metric") {
+      options = numbers.map((number) => (
+        <option key={number} value={number}>
+          {number}kg
+        </option>
+      ));
+    } else if (unit === "Imperial") {
+      options = numbers.map((number) => (
+        <option key={number} value={number}>
+          {number}lbs
+        </option>
+      ));
+    }
+    return (
+      <Form>
+        <h6>Squat</h6>
+        <Form.Group controlId="exampleForm.ControlSelect1">
+          <Form.Label>Choose Unit of Measurement</Form.Label>
+          <Form.Control value={unit} onChange={handleUnit} as="select">
+            <option value="Metric" name="Metric">
+              Metric
+            </option>
+            <option value="Imperial" name="Imperial">
+              Imperial
+            </option>
+          </Form.Control>
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>Current One Rep Max</Form.Label>
+          <Form.Control
+            value={goal.current1RM}
+            name={goal.goalName}
+            onChange={current1RMChange}
+            as="select"
+          >
+            {options}
+          </Form.Control>
+          <Form.Label>Goal One Rep Max</Form.Label>
+          <Form.Control
+            value={goal.goal1RM}
+            name={goal.goalName}
+            onChange={goal1RMChange}
+            as="select"
+          >
+            {options}
+          </Form.Control>
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>Weight</Form.Label>
+          <Form.Control
+            value={goal.currentWeight}
+            name={goal.goalName}
+            onChange={currentWeightChange}
+            as="select"
+          >
+            {options}
+          </Form.Control>
+          <Form.Label>Current Reps</Form.Label>
+          <Form.Control
+            value={goal.currentRepetitions}
+            name={goal.goalName}
+            onChange={currentRepetitionChange}
+            as="select"
+          >
+            {repOptions}
+          </Form.Control>
+          <Form.Label>Goal Reps</Form.Label>
+          <Form.Control
+            value={goal.goalRepetitions}
+            name={goal.goalName}
+            onChange={handleRepetitionChange}
+            as="select"
+          >
+            {repOptions}
           </Form.Control>
         </Form.Group>
       </Form>
