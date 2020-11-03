@@ -36,7 +36,7 @@ export const UpdateWeightGoal = () => {
   } else {
     options = numbers.map((number) => (
       <option key={number} value={number}>
-        {number}lb
+        {number}lbs
       </option>
     ));
   }

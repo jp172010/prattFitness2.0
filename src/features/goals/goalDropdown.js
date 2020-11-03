@@ -4,19 +4,20 @@ import { Form } from "react-bootstrap";
 import CircumferenceGoalChecked from "./circumferenceGoalChecked";
 import { useSelector } from "react-redux";
 import { WeightGoalChecked } from "./weightGoalChecked";
-import {BodyFatGoalChecked} from "./bodyFatGoalChecked"
+import { BodyFatGoalChecked } from "./bodyFatGoalChecked";
+import { MovementGoalChecked } from "./movementGoalChecked";
 
 export const GoalDropdown = () => {
   let circumference;
   let weight;
   let bodyFat;
+  let movement;
   const goals = useSelector((state) => state.users.goals);
   const circumferenceIndex = goals.findIndex(
     (goal) => goal.type === "Circumference"
   );
-  const bodyFatIndex = goals.findIndex(
-    (goal) => goal.type === "BodyFat"
-  );
+  const movementIndex = goals.findIndex((goal) => goal.type === "Movement");
+  const bodyFatIndex = goals.findIndex((goal) => goal.type === "BodyFat");
   const weightIndex = goals.findIndex((goal) => goal.type === "Weight");
   if (circumferenceIndex === -1) {
     circumference = <CircumferenceGoalChecked />;
@@ -27,6 +28,9 @@ export const GoalDropdown = () => {
   if (bodyFatIndex === -1) {
     bodyFat = <BodyFatGoalChecked />;
   }
+  if (movementIndex === -1) {
+    movement = <MovementGoalChecked />;
+  }
   return (
     <Dropdown>
       <Dropdown.Toggle variant="secondary" id="dropdown-basic">
@@ -36,9 +40,9 @@ export const GoalDropdown = () => {
         {circumference}
         {weight}
         {bodyFat}
+        {movement}
         <Form>
           <Form.Group controlId="formBasicCheckbox">
-            <Form.Check name="movement" type="checkbox" label="Movement" />
             <Form.Check name="dietary" type="checkbox" label="Dietary" />
           </Form.Group>
         </Form>

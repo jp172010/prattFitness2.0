@@ -12,9 +12,10 @@ import firebase from "../../Firebase";
 import { useDispatch, useSelector } from "react-redux";
 import { handleGoalClose } from "../goals/goalsSlice";
 import { userSignIn, fetchGoals, deleteGoal } from "./usersSlice";
-import { UpdateCircumferenceGoal } from "../goals/updateCircumferenceGoal.js";
+import { UpdateCircumferenceGoal } from "../goals/updateCircumferenceGoal";
 import { UpdateWeightGoal } from "../goals/updateWeightGoal";
 import { UpdateBodyFatGoal } from "../goals/updateBodyFatGoal";
+import { UpdateMovementGoal } from "../goals/updateMovementGoal";
 
 export const Home = () => {
   const { currentUser } = useContext(AuthContext);
@@ -29,18 +30,16 @@ export const Home = () => {
   let goalArea;
   let newState;
   let unit;
+  let content;
 
   useEffect(() => {
-    const goalsRef = firebase
-      .database()
-      .ref("users/" + uid + "/goals");
+    const goalsRef = firebase.database().ref("users/" + uid + "/goals");
     goalsRef.on("value", (snapshot) => {
       let item = snapshot.val();
       if (item !== null) {
-        for(let items in item){
-          if(item[items].type === "Circumference"){
+        for (let items in item) {
+          if (item[items].type === "Circumference") {
             newState = {
-              
               type: item[items].type,
               goals: item[items].goals,
               unit: item[items].unit,
@@ -48,9 +47,8 @@ export const Home = () => {
             if (newState !== undefined) {
               dispatch(fetchGoals(newState));
             }
-          }else if(item[items].type === "Weight"){
+          } else if (item[items].type === "Weight") {
             newState = {
-              
               type: item[items].type,
               goals: item[items].newGoal,
               current: item[items].currentGoal,
@@ -59,12 +57,20 @@ export const Home = () => {
             if (newState !== undefined) {
               dispatch(fetchGoals(newState));
             }
-          }else if(item[items].type === "BodyFat"){
+          } else if (item[items].type === "BodyFat") {
             newState = {
-              
               type: item[items].type,
               goals: item[items].newGoal,
               current: item[items].currentGoal,
+            };
+            if (newState !== undefined) {
+              dispatch(fetchGoals(newState));
+            }
+          } else if (item[items].type === "Movement") {
+            newState = {
+              type: item[items].type,
+              goals: item[items].goals,
+              unit: item[items].unit,
             };
             if (newState !== undefined) {
               dispatch(fetchGoals(newState));
@@ -99,10 +105,16 @@ export const Home = () => {
         unit = "cm";
       } else if (item.unit === "Imperial" && item.type === "Circumference") {
         unit = '"';
-      } else if (item.unit === "Metric" && item.type === "Weight") {
+      } else if (
+        item.unit === "Metric" &&
+        (item.type === "Weight" || item.type === "Movement")
+      ) {
         unit = "kg";
-      } else if (item.unit === "Imperial" && item.type === "Weight") {
-        unit = "lb";
+      } else if (
+        item.unit === "Imperial" &&
+        (item.type === "Weight" || item.type === "Movement")
+      ) {
+        unit = "lbs";
       }
       if (item.type === "Circumference") {
         return (
@@ -150,6 +162,116 @@ export const Home = () => {
               </Col>
               <Col xs={6}>
                 <UpdateCircumferenceGoal />
+              </Col>
+              <Col xs={6} />
+              <Col xs={6}>
+                <Button variant="danger" onClick={() => removeItem(item.type)}>
+                  Delete
+                </Button>
+              </Col>
+            </Row>
+          </Container>
+        );
+      }
+      if (item.type === "Movement") {
+        return (
+          <Container key={item.goals.id} className="goal">
+            <Row className="justify-content-md-center">
+              <Col xs={12}>
+                <h3>{item.type}</h3>
+              </Col>
+              <Col xs={6}>
+                <ul>
+                  {item.goals.map((item) => {
+                    const currentGoalNumber = parseInt(item.currentRepetitions);
+                    const goalNumber = parseInt(item.goalRepetitions);
+                    if (item.weighted) {
+                      const currentWeight = parseInt(item.currentWeight);
+                      const goalWeight = parseInt(item.goalWeight);
+                      const toGoal = goalWeight - currentWeight;
+                      content = (
+                        <Row>
+                          <Col>
+                            Current Weight: &nbsp;
+                            {item.currentWeight}
+                            {unit}
+                          </Col>
+                          <Col>
+                            Goal: &nbsp;
+                            {item.goalWeight}
+                            {unit}
+                          </Col>
+                          <Col>
+                            Remaining: &nbsp;
+                            <span style={{ color: "red" }}>
+                              {toGoal}
+                              {unit}
+                            </span>
+                          </Col>
+                        </Row>
+                      );
+                    }
+                    const numberToGoal = goalNumber - currentGoalNumber;
+                    if (item.goalName === "Pull Up") {
+                      return (
+                        <li key={item.id}>
+                          <Container key={item.goalName}>
+                            <Row>
+                              <Col xs={12}>
+                                <h5>{item.goalName}</h5>
+                              </Col>
+                              <Col>
+                                Current Reps: &nbsp;
+                                {item.currentRepetitions}
+                              </Col>
+                              <Col>
+                                Goal: &nbsp;
+                                {item.goalRepetitions}
+                              </Col>
+                              <Col>
+                                Remaining: &nbsp;
+                                <span style={{ color: "red" }}>
+                                  {numberToGoal}
+                                </span>
+                              </Col>
+                              {content}
+                            </Row>
+                          </Container>
+                        </li>
+                      );
+                    }
+                    if (item.goalName === "Push Up" || item.goalName === "Sit Up") {
+                      return (
+                        <li key={item.id}>
+                          <Container key={item.goalName}>
+                            <Row>
+                              <Col xs={12}>
+                                <h5>{item.goalName}</h5>
+                              </Col>
+                              <Col>
+                                Current Reps: &nbsp;
+                                {item.currentRepetitions}
+                              </Col>
+                              <Col>
+                                Goal: &nbsp;
+                                {item.goalRepetitions}
+                              </Col>
+                              <Col>
+                                Remaining: &nbsp;
+                                <span style={{ color: "red" }}>
+                                  {numberToGoal}
+                                </span>
+                              </Col>
+                            </Row>
+                          </Container>
+                        </li>
+                      );
+                    }
+                  })}
+                </ul>
+              </Col>
+              <Col xs={6}>
+                <UpdateMovementGoal />
               </Col>
               <Col xs={6} />
               <Col xs={6}>
@@ -219,19 +341,14 @@ export const Home = () => {
                   <Col xs={12}>{item.goalName}</Col>
                   <Col>
                     Current: &nbsp;
-                    {item.current}
-                    %
+                    {item.current}%
                   </Col>
                   <Col>
                     Goal: &nbsp;
-                    {item.goals}
-                    %
+                    {item.goals}%
                   </Col>
                   Remaining: &nbsp;
-                  <span style={{ color: "red" }}>
-                      {numberToGoal}
-                      %
-                    </span>
+                  <span style={{ color: "red" }}>{numberToGoal}%</span>
                 </Row>
               </Col>
               <Col xs={7}>

@@ -80,7 +80,7 @@ export const WeightGoalChecked = () => {
   } else {
     options = numbers.map((number) => (
       <option key={number} value={number}>
-        {number}lb
+        {number}lbs
       </option>
     ));
   }

@@ -8,21 +8,15 @@ import {
   movementGoalChecked,
   movementGoalUnchecked,
   handleGoalClose,
-  handleUnitChange,
 } from "./goalsSlice";
 import { MovementForm } from "./movementForm";
 
-const MovementGoalChecked = () => {
+export const MovementGoalChecked = () => {
   const unit = useSelector((state) => state.goals.unit);
   const goals = useSelector((state) => state.goals.movementGoals);
   const dispatch = useDispatch();
   const [show, setShow] = useState(false);
-  let content;
-
-  const handleUnit = (e) => {
-    let name = e.target.value;
-    dispatch(handleUnitChange(name));
-  };
+  let content = [];
 
   const handleMovementChange = (e) => {
     if (e.target.checked) {
@@ -39,9 +33,7 @@ const MovementGoalChecked = () => {
   const handleGoalChange = (e) => {
     if (e.target.checked) {
       let goalName = e.target.name;
-      let goal = "";
-      let currentGoal = "";
-      dispatch(movementGoalChecked({ goalName, goal, currentGoal }));
+      dispatch(movementGoalChecked({ goalName }));
     } else {
       dispatch(movementGoalUnchecked(e.target.name));
     }
@@ -50,16 +42,15 @@ const MovementGoalChecked = () => {
   const sendGoal = async () => {
     for (let items in goals) {
       if (
-        goals[items].goal === "" ||
-        goals[items].goal === "0" ||
-        goals[items].currentGoal === "" ||
-        goals[items].currentGoal === "0"
+        goals[items].goalRepetitions === undefined ||
+        goals[items].goalRepetitions === "0"
       ) {
         alert("Please Select A Length More Than 0");
         return
       }
     }
     try {
+      console.log(goals)
       const user = firebase.auth().currentUser;
       let userId = user.uid;
       firebase
@@ -67,8 +58,8 @@ const MovementGoalChecked = () => {
         .ref("users/" + userId + "/goals/Movement")
         .set({
           type: "Movement",
-          unit: unit,
           goals: goals,
+          unit: unit,
         });
     } catch (err) {
       console.error("Failed to save goal: ", err);
@@ -78,9 +69,9 @@ const MovementGoalChecked = () => {
   };
 
   if (goals.length >= 1) {
-    content = goals.map((goal) => (
-      <MovementForm key={goal.goalName} goal={goal} unit={unit} />
-    ));
+    content.push(goals.map((goal) => (
+      <MovementForm key={goal.goalName} goal={goal} />
+    )));
   }
 
   return (
@@ -100,61 +91,104 @@ const MovementGoalChecked = () => {
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group controlId="exampleForm.ControlSelect1">
-              <Form.Label>Choose Unit of Length</Form.Label>
-              <Form.Control value={unit} onChange={handleUnit} as="select">
-                <option value="Metric" name="Metric">
-                  Metric
-                </option>
-                <option value="Imperial" name="Imperial">
-                  Imperial
-                </option>
-              </Form.Control>
-            </Form.Group>
             <Form.Label>
-              What Body Parts Would You Like To Measure?
+              What Movements Would You Like To Measure?
               <Form.Group controlId="formBasicCheckbox">
-                <Form.Check
+              <Form.Check
                   onChange={handleGoalChange}
-                  name="Neck"
+                  name="Pull Up"
                   type="checkbox"
-                  label="Neck"
+                  label="Pull Up"
                 />
                 <Form.Check
                   onChange={handleGoalChange}
-                  name="Chest"
+                  name="Push Up"
                   type="checkbox"
-                  label="Chest"
+                  label="Push Up"
                 />
                 <Form.Check
                   onChange={handleGoalChange}
-                  name="Bicep"
+                  name="Sit Up"
                   type="checkbox"
-                  label="Bicep"
+                  label="Sit Up"
                 />
                 <Form.Check
                   onChange={handleGoalChange}
-                  name="Forearm"
+                  name="Squat"
                   type="checkbox"
-                  label="Forearm"
+                  label="Squats"
                 />
                 <Form.Check
                   onChange={handleGoalChange}
-                  name="Waist"
+                  name="Bench Press"
                   type="checkbox"
-                  label="Waist"
+                  label="Bench Press"
                 />
                 <Form.Check
                   onChange={handleGoalChange}
-                  name="Thigh"
+                  name="Deadlift"
                   type="checkbox"
-                  label="Thigh"
+                  label="Deadlift"
                 />
                 <Form.Check
                   onChange={handleGoalChange}
-                  name="Calf"
+                  name="Snatch"
                   type="checkbox"
-                  label="Calf"
+                  label="Snatch"
+                />
+                <Form.Check
+                  onChange={handleGoalChange}
+                  name="Clean and Jerk"
+                  type="checkbox"
+                  label="Clean and Jerk"
+                />
+                <Form.Check
+                  onChange={handleGoalChange}
+                  name="Handstand"
+                  type="checkbox"
+                  label="Handstand"
+                />
+                <Form.Check
+                  onChange={handleGoalChange}
+                  name="Turkish Get Up"
+                  type="checkbox"
+                  label="Turkish Get Up"
+                />
+                <Form.Check
+                  onChange={handleGoalChange}
+                  name="Box Jump"
+                  type="checkbox"
+                  label="Box Jump"
+                />
+                <Form.Check
+                  onChange={handleGoalChange}
+                  name="Jump Rope"
+                  type="checkbox"
+                  label="Jump Rope"
+                />
+                <Form.Check
+                  onChange={handleGoalChange}
+                  name="Running"
+                  type="checkbox"
+                  label="Running"
+                />
+                <Form.Check
+                  onChange={handleGoalChange}
+                  name="Rowing"
+                  type="checkbox"
+                  label="Rowing"
+                />
+                <Form.Check
+                  onChange={handleGoalChange}
+                  name="Cycling"
+                  type="checkbox"
+                  label="Cycling"
+                />
+                <Form.Check
+                  onChange={handleGoalChange}
+                  name="Swimming"
+                  type="checkbox"
+                  label="Swimming"
                 />
               </Form.Group>
             </Form.Label>
@@ -171,4 +205,3 @@ const MovementGoalChecked = () => {
     </div>
   );
 };
-export default MovementGoalChecked;
