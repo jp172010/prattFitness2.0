@@ -101,22 +101,17 @@ export const Home = () => {
 
   if (goals.length >= 1) {
     goalArea = goals.map((item) => {
-      if (item.unit === "Metric" && item.type === "Circumference") {
-        unit = "cm";
-      } else if (item.unit === "Imperial" && item.type === "Circumference") {
-        unit = '"';
-      } else if (
-        item.unit === "Metric" &&
-        (item.type === "Weight" || item.type === "Movement")
-      ) {
+      if (item.unit === "Metric" && item.type === "Weight") {
         unit = "kg";
-      } else if (
-        item.unit === "Imperial" &&
-        (item.type === "Weight" || item.type === "Movement")
-      ) {
+      } else if (item.unit === "Imperial" && item.type === "Weight") {
         unit = "lbs";
-      }
+      } 
       if (item.type === "Circumference") {
+        if (item.unit === "Metric") {
+          unit = "cm";
+        } else {
+          unit = '"';
+        }
         return (
           <Container key={item.goals.id} className="goal">
             <Row className="justify-content-md-center">
@@ -132,22 +127,28 @@ export const Home = () => {
                     return (
                       <li key={item.id}>
                         <Container key={item.goalName}>
-                          <Row>
-                            <Col xs={12}>
+                        <Col xs={12}>
                               <h5>{item.goalName}</h5>
                             </Col>
+                          <Row>
+                            <Col>Current:</Col>
+                            <Col>Goal:</Col>
+                            <Col>Remaining:</Col>
+                          </Row>
+                          <Row>
                             <Col>
-                              Current: &nbsp;
-                              {item.currentGoal}
-                              {unit}
+                              <span style={{ color: "white" }}>
+                                {item.currentGoal}
+                                {unit}
+                              </span>
                             </Col>
                             <Col>
-                              Goal: &nbsp;
-                              {item.goal}
-                              {unit}
+                              <span style={{ color: "white" }}>
+                                {item.goal}
+                                {unit}
+                              </span>
                             </Col>
                             <Col>
-                              Remaining: &nbsp;
                               <span style={{ color: "red" }}>
                                 {numberToGoal}
                                 {unit}
@@ -182,54 +183,130 @@ export const Home = () => {
               </Col>
               <Col xs={6}>
                 <ul>
-                  {item.goals.map((item) => {
-                    const currentGoalNumber = parseInt(item.currentRepetitions);
-                    const goalNumber = parseInt(item.goalRepetitions);
-                    if (item.weighted) {
-                      const currentWeight = parseInt(item.currentWeight);
-                      const goalWeight = parseInt(item.goalWeight);
-                      const toGoal = goalWeight - currentWeight;
+                  {item.goals.map((items) => {
+                    if (
+                      item.unit === "Metric" &&
+                      (items.goalName === "Running" ||
+                        items.goalName === "Rowing" ||
+                        items.goalName === "Cycling" ||
+                        items.goalName === "Swimming")
+                    ) {
+                      unit = "km";
+                    } else if (
+                      item.unit === "Imperial" &&
+                      (items.goalName === "Running" ||
+                        items.goalName === "Rowing" ||
+                        items.goalName === "Cycling" ||
+                        items.goalName === "Swimming")
+                    ) {
+                      unit = "mi";
+                    } else if (item.unit === "Metric") {
+                      unit = "kg";
+                    } else if (item.unit === "Imperial") {
+                      unit = "lbs"
+                    }
+                    const goalTime = parseInt(items.goalTime);
+                    const currentTime = parseInt(items.currentTime);
+                    const currentHeight = parseInt(items.currentHeight);
+                    const goalHeight = parseInt(items.goalHeight);
+                    const currentOneRepMax = parseInt(items.current1RM);
+                    const goalOneRepMax = parseInt(items.goal1RM);
+                    const currentGoalNumber = parseInt(items.currentRepetitions);
+                    const goalNumber = parseInt(items.goalRepetitions);
+                    const toTimeGoal = goalTime - currentTime;
+                    const toHeightGoal = goalHeight - currentHeight;
+                    const toGoal = goalOneRepMax - currentOneRepMax;
+                    const numberToGoal = goalNumber - currentGoalNumber;
+                    if (items.double) {
+                      const doubleReps = parseInt(items.doubleReps);
+                      const goalDouble = parseInt(items.goalDouble);
+                      const toGoal = goalDouble - doubleReps;
                       content = (
-                        <Row>
-                          <Col>
-                            Current Weight: &nbsp;
-                            {item.currentWeight}
-                            {unit}
-                          </Col>
-                          <Col>
-                            Goal: &nbsp;
-                            {item.goalWeight}
-                            {unit}
-                          </Col>
-                          <Col>
-                            Remaining: &nbsp;
-                            <span style={{ color: "red" }}>
-                              {toGoal}
-                              {unit}
-                            </span>
-                          </Col>
-                        </Row>
+                        <Container>
+                          <Row>
+                            <Col>Current Doubles:</Col>
+                            <Col>Goal:</Col>
+                            <Col>Remaining:</Col>
+                          </Row>
+                          <Row>
+                            <Col>
+                              <span style={{ color: "white" }}>
+                                {items.doubleReps}
+                              </span>
+                            </Col>
+                            <Col>
+                              <span style={{ color: "white" }}>
+                                {items.goalDouble}
+                              </span>
+                            </Col>
+                            <Col>
+                              <span style={{ color: "red" }}>{toGoal}</span>
+                            </Col>
+                          </Row>
+                        </Container>
                       );
                     }
-                    const numberToGoal = goalNumber - currentGoalNumber;
-                    if (item.goalName === "Pull Up") {
+                    if (items.weighted) {
+                      const currentWeight = parseInt(items.currentWeight);
+                      const goalWeight = parseInt(items.goalWeight);
+                      const toGoal = goalWeight - currentWeight;
+                      content = (
+                        <Container>
+                          <Row>
+                            <Col>Current Weight:</Col>
+                            <Col>Goal:</Col>
+                            <Col>Remaining:</Col>
+                          </Row>
+                          <Row>
+                            <Col>
+                              <span style={{ color: "white" }}>
+                                {items.currentWeight}
+                                {unit}
+                              </span>
+                            </Col>
+                            <Col>
+                              <span style={{ color: "white" }}>
+                                {items.goalWeight}
+                                {unit}
+                              </span>
+                            </Col>
+                            <Col>
+                              <span style={{ color: "red" }}>
+                                {toGoal}
+                                {unit}
+                              </span>
+                            </Col>
+                          </Row>
+                        </Container>
+                      );
+                    }
+                    if (
+                      items.goalName === "Pull Up" ||
+                      items.goalName === "Jump Rope"
+                    ) {
                       return (
-                        <li key={item.id}>
-                          <Container key={item.goalName}>
+                        <li key={items.id}>
+                          <Container key={items.goalName}>
+                            <Col xs={12}>
+                              <h5>{items.goalName}</h5>
+                            </Col>
                             <Row>
-                              <Col xs={12}>
-                                <h5>{item.goalName}</h5>
+                              <Col>Current Reps:</Col>
+                              <Col>Goal:</Col>
+                              <Col>Remaining:</Col>
+                            </Row>
+                            <Row>
+                              <Col>
+                                <span style={{ color: "white" }}>
+                                  {items.currentRepetitions}
+                                </span>
                               </Col>
                               <Col>
-                                Current Reps: &nbsp;
-                                {item.currentRepetitions}
+                                <span style={{ color: "white" }}>
+                                  {items.goalRepetitions}
+                                </span>
                               </Col>
                               <Col>
-                                Goal: &nbsp;
-                                {item.goalRepetitions}
-                              </Col>
-                              <Col>
-                                Remaining: &nbsp;
                                 <span style={{ color: "red" }}>
                                   {numberToGoal}
                                 </span>
@@ -240,24 +317,33 @@ export const Home = () => {
                         </li>
                       );
                     }
-                    if (item.goalName === "Push Up" || item.goalName === "Sit Up") {
+                    if (
+                      items.goalName === "Push Up" ||
+                      items.goalName === "Sit Up"
+                    ) {
                       return (
-                        <li key={item.id}>
-                          <Container key={item.goalName}>
+                        <li key={items.id}>
+                          <Container key={items.goalName}>
+                            <Col xs={12}>
+                              <h5>{items.goalName}</h5>
+                            </Col>
                             <Row>
-                              <Col xs={12}>
-                                <h5>{item.goalName}</h5>
+                              <Col>Current Reps:</Col>
+                              <Col>Goal:</Col>
+                              <Col>Remaining:</Col>
+                            </Row>
+                            <Row>
+                              <Col>
+                                <span style={{ color: "white" }}>
+                                  {items.currentRepetitions}
+                                </span>
                               </Col>
                               <Col>
-                                Current Reps: &nbsp;
-                                {item.currentRepetitions}
+                                <span style={{ color: "white" }}>
+                                  {items.goalRepetitions}
+                                </span>
                               </Col>
                               <Col>
-                                Goal: &nbsp;
-                                {item.goalRepetitions}
-                              </Col>
-                              <Col>
-                                Remaining: &nbsp;
                                 <span style={{ color: "red" }}>
                                   {numberToGoal}
                                 </span>
@@ -267,38 +353,123 @@ export const Home = () => {
                         </li>
                       );
                     }
-                    if (item.goalName === "Squat") {
+                    if (items.goalName === "Box Jump") {
                       return (
-                        <li key={item.id}>
-                          <Container key={item.goalName}>
+                        <li key={items.id}>
+                          <Container key={items.goalName}>
+                            <Col xs={12}>
+                              <h5>{items.goalName}</h5>
+                            </Col>
                             <Row>
-                              <Col xs={12}>
-                                <h5>{item.goalName}</h5>
+                              <Col>Current Height:</Col>
+                              <Col>Goal:</Col>
+                              <Col>Remaining:</Col>
+                            </Row>
+                            <Row>
+                              <Col>
+                                <span style={{ color: "white" }}>
+                                  {items.currentHeight}
+                                </span>
                               </Col>
                               <Col>
-                                Current One Rep Max: &nbsp;
-                                {item.current1RM}
+                                <span style={{ color: "white" }}>
+                                  {items.goalHeight}
+                                </span>
                               </Col>
                               <Col>
-                                Goal One Rep Max: &nbsp;
-                                {item.goal1RM}
-                              </Col>
-                              <Col>
-                                Weight: &nbsp;
-                                {item.currentWeight}
-                              </Col>
-                              <Col>
-                                Current Reps: &nbsp;
-                                {item.currentRepetitions}
-                              </Col>
-                              <Col>
-                                Goal: &nbsp;
-                                {item.goalRepetitions}
-                              </Col>
-                              <Col>
-                                Remaining: &nbsp;
                                 <span style={{ color: "red" }}>
-                                  {numberToGoal}
+                                  {toHeightGoal}
+                                </span>
+                              </Col>
+                            </Row>
+                          </Container>
+                        </li>
+                      );
+                    }
+                    if (
+                      items.goalName === "Running" ||
+                      items.goalName === "Rowing" ||
+                      items.goalName === "Cycling" ||
+                      items.goalName === "Swimming"
+                    ) {
+                      return (
+                        <li key={items.id}>
+                          <Container key={items.goalName}>
+                            <Col xs={12}>
+                              <h5>{items.goalName}</h5>
+                            </Col>
+                            <Row>
+                              <Col xs={3}>Distance Goal:</Col>
+                              <Col xs={3}>Current Time:</Col>
+                              <Col xs={3}>Goal Time:</Col>
+                              <Col xs={3}>Remaining:</Col>
+                            </Row>
+                            <Row>
+                              <Col>
+                                <span style={{ color: "white" }}>
+                                  {items.goalDistance}
+                                  {unit}
+                                </span>
+                              </Col>
+                              <Col>
+                                <span style={{ color: "white" }}>
+                                  {items.currentTime}
+                                  min
+                                </span>
+                              </Col>
+                              <Col>
+                                <span style={{ color: "white" }}>
+                                  {items.goalTime}
+                                  min
+                                </span>
+                              </Col>
+                              <Col>
+                                <span style={{ color: "red" }}>
+                                  {toTimeGoal}
+                                  min
+                                </span>
+                              </Col>
+                            </Row>
+                          </Container>
+                        </li>
+                      );
+                    }
+                    if (
+                      items.goalName === "Squat" ||
+                      items.goalName === "Bench Press" ||
+                      items.goalName === "Deadlift" ||
+                      items.goalName === "Snatch" ||
+                      items.goalName === "Clean and Jerk" ||
+                      items.goalName === "Turkish Get Up"
+                    ) {
+                      return (
+                        <li key={items.id}>
+                          <Container key={items.goalName}>
+                            <Col xs={12}>
+                              <h5>{items.goalName}</h5>
+                            </Col>
+                            <Row>
+                              <Col>1RM:</Col>
+                              <Col>Goal:</Col>
+                              <Col>Remaining:</Col>
+                            </Row>
+                            <Row>
+                              <Col>
+                                <span style={{ color: "white" }}>
+                                  {items.current1RM}
+                                  {unit}
+                                </span>
+                              </Col>
+                              <Col>
+                                <span style={{ color: "white" }}>
+                                  {items.goal1RM}
+                                  {unit}
+                                </span>
+                              </Col>
+                              <Col>
+                                <span style={{ color: "red" }}>
+                                  {toGoal}
+                                  {unit}
                                 </span>
                               </Col>
                             </Row>
@@ -323,6 +494,11 @@ export const Home = () => {
         );
       }
       if (item.type === "Weight") {
+        if (item.unit === "Metric") {
+          unit = "kg";
+        } else {
+          unit = "lbs";
+        }
         const currentGoalNumber = parseInt(item.current);
         const goalNumber = parseInt(item.goals);
         const numberToGoal = goalNumber - currentGoalNumber;
@@ -332,21 +508,27 @@ export const Home = () => {
               <Col xs={12}>
                 <h3>{item.type}</h3>
               </Col>
-              <Col>
+              <Col xs={6}>
+                <Col xs={12}>{item.goalName}</Col>
                 <Row>
-                  <Col xs={12}>{item.goalName}</Col>
+                  <Col>Current:</Col>
+                  <Col>Goal:</Col>
+                  <Col>Remaining:</Col>
+                </Row>
+                <Row>
                   <Col>
-                    Current: &nbsp;
-                    {item.current}
-                    {unit}
+                    <span style={{ color: "white" }}>
+                      {item.current}
+                      {unit}
+                    </span>
                   </Col>
                   <Col>
-                    Goal: &nbsp;
-                    {item.goals}
-                    {unit}
+                    <span style={{ color: "white" }}>
+                      {item.goals}
+                      {unit}
+                    </span>
                   </Col>
                   <Col>
-                    Remaining: &nbsp;
                     <span style={{ color: "red" }}>
                       {numberToGoal}
                       {unit}
@@ -354,10 +536,10 @@ export const Home = () => {
                   </Col>
                 </Row>
               </Col>
-              <Col xs={7}>
+              <Col xs={6}>
                 <UpdateWeightGoal />
               </Col>
-              <Col xs={5} />
+              <Col xs={6} />
               <Button variant="danger" onClick={() => removeItem(item.type)}>
                 Delete
               </Button>
@@ -375,25 +557,29 @@ export const Home = () => {
               <Col xs={12}>
                 <h3>{item.type}</h3>
               </Col>
-              <Col>
+              <Col xs={6}>
+                <Col xs={12}>{item.goalName}</Col>
                 <Row>
-                  <Col xs={12}>{item.goalName}</Col>
+                  <Col>Current:</Col>
+                  <Col>Goal:</Col>
+                  <Col>Remaining:</Col>
+                </Row>
+                <Row>
                   <Col>
-                    Current: &nbsp;
-                    {item.current}%
+                    <span style={{ color: "white" }}>{item.current}%</span>
                   </Col>
                   <Col>
-                    Goal: &nbsp;
-                    {item.goals}%
+                    <span style={{ color: "white" }}>{item.goals}%</span>
                   </Col>
-                  Remaining: &nbsp;
-                  <span style={{ color: "red" }}>{numberToGoal}%</span>
+                  <Col>
+                    <span style={{ color: "red" }}>{numberToGoal}%</span>
+                  </Col>
                 </Row>
               </Col>
-              <Col xs={7}>
+              <Col xs={6}>
                 <UpdateBodyFatGoal />
               </Col>
-              <Col xs={5} />
+              <Col xs={6} />
               <Button variant="danger" onClick={() => removeItem(item.type)}>
                 Delete
               </Button>

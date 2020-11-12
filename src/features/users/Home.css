@@ -25,21 +25,23 @@
   text-align: center;
   border-color: white;
 }
-#recentWorkouts{
-    color: #007bff;
-    height: 54vh;
-    border-style: solid;
-    padding: 2vh;
-    background-color: goldenrod;
-    text-align: center;
-    border-color: white;
+#recentWorkouts {
+  color: #007bff;
+  height: 54vh;
+  border-style: solid;
+  padding: 2vh;
+  background-color: goldenrod;
+  text-align: center;
+  border-color: white;
 }
-#homeContainer{
+#homeContainer {
   background-color: #0033ff;
 }
-.goal{
+.goal {
   margin: 1vh;
   background-color: #0033ff;
   color: goldenrod;
 }
-
+ul {
+  list-style-type: none;
+}

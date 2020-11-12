@@ -1,15 +1,24 @@
 import React from "react";
 import { Form } from "react-bootstrap";
+import Col from "react-bootstrap/Col";
 import {
   movementRepetitionsChanged,
   currentRepetitionsChanged,
   movementWeightChanged,
+  movementHeightChanged,
+  currentHeightChanged,
   weightChanged,
   weightedChecked,
   weightedUnchecked,
-  handleUnitChange,
   current1RMChanged,
   goal1RMChanged,
+  doubleRepsChanged,
+  doubleGoalChanged,
+  doublesChecked,
+  doublesUnchecked,
+  goalDistanceChanged,
+  currentTimeChanged,
+  goalTimeChanged,
 } from "./goalsSlice";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -18,6 +27,31 @@ export const MovementForm = ({ goal }) => {
   const dispatch = useDispatch();
   let content;
 
+  const goalDistanceChange = (e) => {
+    let goalDistance = e.target.value;
+    let goalName = e.target.name;
+    dispatch(goalDistanceChanged({ goalName, goalDistance }));
+  };
+  const timeChange = (e) => {
+    let currentTime = e.target.value;
+    let goalName = e.target.name;
+    dispatch(currentTimeChanged({ goalName, currentTime }));
+  };
+  const goalTimeChange = (e) => {
+    let goalTime = e.target.value;
+    let goalName = e.target.name;
+    dispatch(goalTimeChanged({ goalName, goalTime }));
+  };
+  const currentHeightChange = (e) => {
+    let currentHeight = e.target.value;
+    let goalName = e.target.name;
+    dispatch(currentHeightChanged({ goalName, currentHeight }));
+  };
+  const handleHeightChange = (e) => {
+    let goalHeight = e.target.value;
+    let goalName = e.target.name;
+    dispatch(movementHeightChanged({ goalName, goalHeight }));
+  };
   const handleRepetitionChange = (e) => {
     let goalRepetitions = e.target.value;
     let goalName = e.target.name;
@@ -33,6 +67,16 @@ export const MovementForm = ({ goal }) => {
     let goalName = e.target.name;
     dispatch(weightChanged({ goalName, currentWeight }));
   };
+  const goalDoubleChange = (e) => {
+    let goalDouble = e.target.value;
+    let goalName = e.target.name;
+    dispatch(doubleGoalChanged({ goalName, goalDouble }));
+  };
+  const doubleRepChange = (e) => {
+    let doubleReps = e.target.value;
+    let goalName = e.target.name;
+    dispatch(doubleRepsChanged({ goalName, doubleReps }));
+  };
   const currentRepetitionChange = (e) => {
     let currentRepetitions = e.target.value;
     let goalName = e.target.name;
@@ -47,10 +91,6 @@ export const MovementForm = ({ goal }) => {
     let goal1RM = e.target.value;
     let goalName = e.target.name;
     dispatch(goal1RMChanged({ goalName, goal1RM }));
-  };
-  const handleUnit = (e) => {
-    let name = e.target.value;
-    dispatch(handleUnitChange(name));
   };
 
   const WeightedForm = () => {
@@ -70,17 +110,6 @@ export const MovementForm = ({ goal }) => {
 
     return (
       <Form>
-        <Form.Group controlId="exampleForm.ControlSelect1">
-          <Form.Label>Choose Unit of Measurement</Form.Label>
-          <Form.Control value={unit} onChange={handleUnit} as="select">
-            <option value="Metric" name="Metric">
-              Metric
-            </option>
-            <option value="Imperial" name="Imperial">
-              Imperial
-            </option>
-          </Form.Control>
-        </Form.Group>
         <Form.Group>
           <Form.Label>Current Achievable Weight</Form.Label>
           <Form.Control
@@ -105,10 +134,39 @@ export const MovementForm = ({ goal }) => {
     );
   };
 
+  const DoubleForm = () => {
+    return (
+      <Form>
+        <Form.Group>
+          <Form.Label>Current Consecutive Doubles</Form.Label>
+          <Form.Control
+            value={goal.doubleReps}
+            name={goal.goalName}
+            onChange={doubleRepChange}
+            as="select"
+          >
+            {options}
+          </Form.Control>
+          <Form.Label>Goal Consecutive Doubles</Form.Label>
+          <Form.Control
+            value={goal.goalDouble}
+            name={goal.goalName}
+            onChange={goalDoubleChange}
+            as="select"
+          >
+            {options}
+          </Form.Control>
+        </Form.Group>
+      </Form>
+    );
+  };
+
   if (goal.weighted === true) {
     content = <WeightedForm />;
   }
-
+  if (goal.double === true) {
+    content = <DoubleForm />;
+  }
   const handleWeighted = (e) => {
     if (e.target.checked) {
       dispatch(weightedChecked(goal.goalName));
@@ -116,21 +174,17 @@ export const MovementForm = ({ goal }) => {
       dispatch(weightedUnchecked(goal.goalName));
     }
   };
+  const handleDoubles = (e) => {
+    if (e.target.checked) {
+      dispatch(doublesChecked(goal.goalName));
+    } else {
+      dispatch(doublesUnchecked(goal.goalName));
+    }
+  };
 
   let numbers = [];
-  let reps = [];
-  let repOptions;
   let options;
   let i;
-
-  for (i = 0; i < 100; i++) {
-   reps.push(i);
-  }
-  repOptions = reps.map((number) => (
-    <option key={number} value={number}>
-      {number}
-    </option>
-  ));
 
   for (i = 0; i < 1000; i++) {
     numbers.push(i);
@@ -175,10 +229,45 @@ export const MovementForm = ({ goal }) => {
       </Form>
     );
   }
-  if (goal.goalName === "Push Up") {
+  if (goal.goalName === "Jump Rope") {
     return (
       <Form>
-        <h6>Push Up</h6>
+        <h6>Jump Rope</h6>
+        <Form.Group>
+          <Form.Label>Current Achievable Reps</Form.Label>
+          <Form.Control
+            value={goal.currentRepetitions}
+            name={goal.goalName}
+            onChange={currentRepetitionChange}
+            as="select"
+          >
+            {options}
+          </Form.Control>
+          <Form.Label>Goal Reps</Form.Label>
+          <Form.Control
+            value={goal.goalRepetitions}
+            name={goal.goalName}
+            onChange={handleRepetitionChange}
+            as="select"
+          >
+            {options}
+          </Form.Control>
+          <Form.Check
+            onChange={handleDoubles}
+            name="Doubles"
+            type="checkbox"
+            label="Doubles"
+            checked={goal.double}
+          />
+          {content}
+        </Form.Group>
+      </Form>
+    );
+  }
+  if (goal.goalName === "Push Up" || goal.goalName === "Sit Up") {
+    return (
+      <Form>
+        <h6>{goal.goalName} </h6>
         <Form.Group>
           <Form.Label>Current Achievable Reps</Form.Label>
           <Form.Control
@@ -202,34 +291,14 @@ export const MovementForm = ({ goal }) => {
       </Form>
     );
   }
-  if (goal.goalName === "Sit Up") {
-    return (
-      <Form>
-        <h6>Sit Up</h6>
-        <Form.Group>
-          <Form.Label>Current Achievable Reps</Form.Label>
-          <Form.Control
-            value={goal.currentRepetitions}
-            name={goal.goalName}
-            onChange={currentRepetitionChange}
-            as="select"
-          >
-            {options}
-          </Form.Control>
-          <Form.Label>Goal Reps</Form.Label>
-          <Form.Control
-            value={goal.goalRepetitions}
-            name={goal.goalName}
-            onChange={handleRepetitionChange}
-            as="select"
-          >
-            {options}
-          </Form.Control>
-        </Form.Group>
-      </Form>
-    );
-  }
-  if (goal.goalName === "Squat") {
+  if (
+    goal.goalName === "Squat" ||
+    goal.goalName === "Bench Press" ||
+    goal.goalName === "Deadlift" ||
+    goal.goalName === "Snatch" ||
+    goal.goalName === "Clean and Jerk" ||
+    goal.goalName === "Turkish Get Up"
+  ) {
     if (unit === "Metric") {
       options = numbers.map((number) => (
         <option key={number} value={number}>
@@ -245,18 +314,7 @@ export const MovementForm = ({ goal }) => {
     }
     return (
       <Form>
-        <h6>Squat</h6>
-        <Form.Group controlId="exampleForm.ControlSelect1">
-          <Form.Label>Choose Unit of Measurement</Form.Label>
-          <Form.Control value={unit} onChange={handleUnit} as="select">
-            <option value="Metric" name="Metric">
-              Metric
-            </option>
-            <option value="Imperial" name="Imperial">
-              Imperial
-            </option>
-          </Form.Control>
-        </Form.Group>
+        <h6>{goal.goalName}</h6>
         <Form.Group>
           <Form.Label>Current One Rep Max</Form.Label>
           <Form.Control
@@ -277,34 +335,117 @@ export const MovementForm = ({ goal }) => {
             {options}
           </Form.Control>
         </Form.Group>
+      </Form>
+    );
+  }
+  if (goal.goalName === "Box Jump") {
+    if (unit === "Metric") {
+      options = numbers.map((number) => (
+        <option key={number} value={number}>
+          {number}cm
+        </option>
+      ));
+    } else if (unit === "Imperial") {
+      options = numbers.map((number) => (
+        <option key={number} value={number}>
+          {number}"
+        </option>
+      ));
+    }
+    return (
+      <Form>
+        <h6>{goal.goalName} </h6>
         <Form.Group>
-          <Form.Label>Weight</Form.Label>
+          <Form.Label>Current Achievable Height</Form.Label>
           <Form.Control
-            value={goal.currentWeight}
+            value={goal.currentHeight}
             name={goal.goalName}
-            onChange={currentWeightChange}
+            onChange={currentHeightChange}
             as="select"
           >
             {options}
           </Form.Control>
-          <Form.Label>Current Reps</Form.Label>
+          <Form.Label>Goal Height</Form.Label>
           <Form.Control
-            value={goal.currentRepetitions}
+            value={goal.goalHeight}
             name={goal.goalName}
-            onChange={currentRepetitionChange}
+            onChange={handleHeightChange}
             as="select"
           >
-            {repOptions}
+            {options}
           </Form.Control>
-          <Form.Label>Goal Reps</Form.Label>
-          <Form.Control
-            value={goal.goalRepetitions}
-            name={goal.goalName}
-            onChange={handleRepetitionChange}
-            as="select"
-          >
-            {repOptions}
-          </Form.Control>
+        </Form.Group>
+      </Form>
+    );
+  }
+  if (
+    goal.goalName === "Running" ||
+    goal.goalName === "Rowing" ||
+    goal.goalName === "Cycling" ||
+    goal.goalName === "Swimming"
+  ) {
+    if (unit === "Metric") {
+      options = numbers.map((number) => (
+        <option key={number} value={number}>
+          {number}km
+        </option>
+      ));
+    } else if (unit === "Imperial") {
+      options = numbers.map((number) => (
+        <option key={number} value={number}>
+          {number} mi
+        </option>
+      ));
+    }
+    let timeOptions;
+    timeOptions = numbers.map((number) => (
+      <option key={number} value={number}>
+        {number} min
+      </option>
+    ));
+    return (
+      <Form>
+        <h6>{goal.goalName} </h6>
+        <Form.Group>
+          <Col>
+            <Form.Label>
+              Distance Goal
+              <Form.Control
+                value={goal.goalDistance}
+                name={goal.goalName}
+                onChange={goalDistanceChange}
+                as="select"
+              >
+                {options}
+              </Form.Control>
+            </Form.Label>
+          </Col>
+          <Col>
+            <Form.Label>
+              Current Time
+              <Form.Control
+                value={goal.currentTime}
+                name={goal.goalName}
+                onChange={timeChange}
+                as="select"
+              >
+                {timeOptions}
+              </Form.Control>
+            </Form.Label>
+          </Col>
+          <Col>
+            <Form.Label>
+              Goal Time
+              <Form.Control
+                value={goal.goalTime}
+                name={goal.goalName}
+                onChange={goalTimeChange}
+                as="select"
+              >
+                {timeOptions}
+              </Form.Control>
+            </Form.Label>
+          </Col>
         </Form.Group>
       </Form>
     );

@@ -206,6 +206,13 @@ export const UpdateCircumferenceGoal = () => {
 
   const handleClose = () => {
     setShow(false);
+    setNeckChecked(false);
+    setChestChecked(false);
+    setBicepChecked(false);
+    setForearmChecked(false);
+    setWaistChecked(false);
+    setThighChecked(false);
+    setCalfChecked(false);
     dispatch(handleGoalClose());
   };
 

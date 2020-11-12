@@ -5,6 +5,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import firebase from "../../Firebase";
 import {
+  handleUnitChange,
   movementGoalChecked,
   movementGoalUnchecked,
   handleGoalClose,
@@ -38,17 +39,12 @@ export const MovementGoalChecked = () => {
       dispatch(movementGoalUnchecked(e.target.name));
     }
   };
+  const handleUnit = (e) => {
+    let name = e.target.value;
+    dispatch(handleUnitChange(name));
+  };
 
   const sendGoal = async () => {
-    for (let items in goals) {
-      if (
-        goals[items].goalRepetitions === undefined ||
-        goals[items].goalRepetitions === "0"
-      ) {
-        alert("Please Select A Length More Than 0");
-        return
-      }
-    }
     try {
       console.log(goals)
       const user = firebase.auth().currentUser;
@@ -91,6 +87,14 @@ export const MovementGoalChecked = () => {
         </Modal.Header>
         <Modal.Body>
           <Form>
+          <Form.Control value={unit} onChange={handleUnit} as="select">
+            <option value="Metric" name="Metric">
+              Metric
+            </option>
+            <option value="Imperial" name="Imperial">
+              Imperial
+            </option>
+          </Form.Control>
             <Form.Label>
               What Movements Would You Like To Measure?
               <Form.Group controlId="formBasicCheckbox">

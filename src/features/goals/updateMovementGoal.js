@@ -128,6 +128,12 @@ export const UpdateMovementGoal = () => {
       let goalWeight = items.goalWeight;
       let goal1RM = items.goal1RM;
       let current1RM = items.current1RM;
+      let double = items.double;
+      let doubleReps = items.doubleReps;
+      let goalDouble = items.goalDouble;
+      let goalTime = items.goalTime;
+      let currentTime = items.currentTime;
+      let goalDistance = items.goalDistance;
       dispatch(
         movementGoalChecked({
           goalName,
@@ -138,6 +144,12 @@ export const UpdateMovementGoal = () => {
           goalWeight,
           goal1RM,
           current1RM,
+          double,
+          doubleReps,
+          goalDouble,
+          goalTime,
+          currentTime,
+          goalDistance,
         })
       );
     }
@@ -271,9 +283,29 @@ export const UpdateMovementGoal = () => {
       }
     }
   };
+  const handleUnit = (e) => {
+    let name = e.target.value;
+    dispatch(handleUnitChange(name));
+  };
 
   const handleClose = () => {
     setShow(false);
+    setPullUpChecked(false);
+    setPushUpChecked(false);
+    setSitUpChecked(false);
+    setSquatChecked(false);
+    setBenchPressChecked(false);
+    setDeadliftChecked(false);
+    setSnatchChecked(false);
+    setCleanAndJerkChecked(false);
+    setHandstandChecked(false);
+    setTurkishGetUpChecked(false);
+    setBoxJumpChecked(false);
+    setJumpRopeChecked(false);
+    setRunningChecked(false);
+    setRowingChecked(false);
+    setCyclingChecked(false);
+    setSwimmingChecked(false);
     dispatch(handleGoalClose());
   };
 
@@ -405,6 +437,17 @@ export const UpdateMovementGoal = () => {
                   checked={checkedSwimming}
                 />
               </Form.Group>
+            </Form.Label>
+            <Form.Label>
+              Choose Unit of Measurement
+              <Form.Control value={unit} onChange={handleUnit} as="select">
+                <option value="Metric" name="Metric">
+                  Metric
+                </option>
+                <option value="Imperial" name="Imperial">
+                  Imperial
+                </option>
+              </Form.Control>
             </Form.Label>
           </Form>
         </Modal.Body>
