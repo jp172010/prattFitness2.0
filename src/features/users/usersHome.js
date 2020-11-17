@@ -16,6 +16,7 @@ import { UpdateCircumferenceGoal } from "../goals/updateCircumferenceGoal";
 import { UpdateWeightGoal } from "../goals/updateWeightGoal";
 import { UpdateBodyFatGoal } from "../goals/updateBodyFatGoal";
 import { UpdateMovementGoal } from "../goals/updateMovementGoal";
+import { UpdateDietGoal } from "../goals/updateDietGoal";
 
 export const Home = () => {
   const { currentUser } = useContext(AuthContext);
@@ -57,7 +58,7 @@ export const Home = () => {
             if (newState !== undefined) {
               dispatch(fetchGoals(newState));
             }
-          } else if (item[items].type === "BodyFat") {
+          } else if (item[items].type === "Body Fat") {
             newState = {
               type: item[items].type,
               goals: item[items].newGoal,
@@ -71,6 +72,14 @@ export const Home = () => {
               type: item[items].type,
               goals: item[items].goals,
               unit: item[items].unit,
+            };
+            if (newState !== undefined) {
+              dispatch(fetchGoals(newState));
+            }
+          }else if (item[items].type === "Diet") {
+            newState = {
+              type: item[items].type,
+              goals: item[items].goals,
             };
             if (newState !== undefined) {
               dispatch(fetchGoals(newState));
@@ -98,6 +107,12 @@ export const Home = () => {
     dispatch(deleteGoal(itemId));
     dispatch(handleGoalClose());
   };
+  const removeBodyFat = async (itemId) => {
+    const itemRef = firebase.database().ref(`users/${uid}/goals/${itemId}`);
+    itemRef.remove();
+    dispatch(deleteGoal("Body Fat"));
+    dispatch(handleGoalClose());
+  };
 
   if (goals.length >= 1) {
     goalArea = goals.map((item) => {
@@ -105,7 +120,7 @@ export const Home = () => {
         unit = "kg";
       } else if (item.unit === "Imperial" && item.type === "Weight") {
         unit = "lbs";
-      } 
+      }
       if (item.type === "Circumference") {
         if (item.unit === "Metric") {
           unit = "cm";
@@ -127,9 +142,9 @@ export const Home = () => {
                     return (
                       <li key={item.id}>
                         <Container key={item.goalName}>
-                        <Col xs={12}>
-                              <h5>{item.goalName}</h5>
-                            </Col>
+                          <Col xs={12}>
+                            <h5>{item.goalName}</h5>
+                          </Col>
                           <Row>
                             <Col>Current:</Col>
                             <Col>Goal:</Col>
@@ -174,6 +189,86 @@ export const Home = () => {
           </Container>
         );
       }
+      if (item.type === "Diet") {
+        return (
+          <Container key={item.goals.id} className="goal">
+            <Row className="justify-content-md-center">
+              <Col xs={12}>
+                <h3>{item.type}</h3>
+              </Col>
+              <Col xs={6}>
+                <ul>
+                  {item.goals.map((items) => {
+                    if(items.goalName === "Macros"){
+                      return (
+                        <li key={items.id}>
+                          <Container key={items.goalName}>
+                            <Col xs={12}>
+                              <h5>{items.goalName}</h5>
+                            </Col>
+                            <Row>
+                              <Col>Fat Goal:</Col>
+                              <Col>Carb Goal:</Col>
+                              <Col>Protein Goal:</Col>
+                            </Row>
+                            <Row>
+                              <Col>
+                                <span style={{ color: "white" }}>
+                                  {items.fatGoal}%
+                                </span>
+                              </Col>
+                              <Col>
+                                <span style={{ color: "white" }}>
+                                  {items.carbGoal}%
+                                </span>
+                              </Col>
+                              <Col>
+                                <span style={{ color: "white" }}>
+                                  {items.proteinGoal}%
+                                </span>
+                              </Col>
+                            </Row>
+                          </Container>
+                        </li>
+                      );
+                    }
+                    if(items.goalName === "Calories"){
+                      return (
+                        <li key={items.id}>
+                          <Container key={items.goalName}>
+                            <Col xs={12}>
+                              <h5>{items.goalName}</h5>
+                            </Col>
+                            <Row>
+                              <Col>Calorie Goal:</Col>
+                            </Row>
+                            <Row>
+                              <Col>
+                                <span style={{ color: "white" }}>
+                                  {items.calorieGoal}kcal
+                                </span>
+                              </Col>
+                            </Row>
+                          </Container>
+                        </li>
+                      );
+                    }
+                  })}
+                </ul>
+              </Col>
+              <Col xs={6}>
+                <UpdateDietGoal />
+              </Col>
+              <Col xs={6} />
+              <Col xs={6}>
+                <Button variant="danger" onClick={() => removeItem(item.type)}>
+                  Delete
+                </Button>
+              </Col>
+            </Row>
+          </Container>
+        );
+      }
       if (item.type === "Movement") {
         return (
           <Container key={item.goals.id} className="goal">
@@ -203,7 +298,7 @@ export const Home = () => {
                     } else if (item.unit === "Metric") {
                       unit = "kg";
                     } else if (item.unit === "Imperial") {
-                      unit = "lbs"
+                      unit = "lbs";
                     }
                     const goalTime = parseInt(items.goalTime);
                     const currentTime = parseInt(items.currentTime);
@@ -211,7 +306,9 @@ export const Home = () => {
                     const goalHeight = parseInt(items.goalHeight);
                     const currentOneRepMax = parseInt(items.current1RM);
                     const goalOneRepMax = parseInt(items.goal1RM);
-                    const currentGoalNumber = parseInt(items.currentRepetitions);
+                    const currentGoalNumber = parseInt(
+                      items.currentRepetitions
+                    );
                     const goalNumber = parseInt(items.goalRepetitions);
                     const toTimeGoal = goalTime - currentTime;
                     const toHeightGoal = goalHeight - currentHeight;
@@ -547,7 +644,7 @@ export const Home = () => {
           </Container>
         );
       }
-      if (item.type === "BodyFat") {
+      if (item.type === "Body Fat") {
         const currentGoalNumber = parseInt(item.current);
         const goalNumber = parseInt(item.goals);
         const numberToGoal = goalNumber - currentGoalNumber;
@@ -580,7 +677,7 @@ export const Home = () => {
                 <UpdateBodyFatGoal />
               </Col>
               <Col xs={6} />
-              <Button variant="danger" onClick={() => removeItem(item.type)}>
+              <Button variant="danger" onClick={() => removeBodyFat("BodyFat")}>
                 Delete
               </Button>
             </Row>

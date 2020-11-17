@@ -44,7 +44,7 @@ export const BodyFatGoalChecked = () => {
           .database()
           .ref("users/" + userId + "/goals/BodyFat")
           .set({
-            type: "BodyFat",
+            type: "Body Fat",
             currentGoal: goals.currentBodyFat,
             newGoal: goals.goalBodyFat,
           });

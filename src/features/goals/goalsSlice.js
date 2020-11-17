@@ -11,6 +11,7 @@ const initialState = {
     goalBodyFat: undefined,
     goalName: "Body Fat",
   },
+  dietGoals: [],
   movementGoals: [],
   circumferenceGoals: [],
   unit: "Metric",
@@ -190,6 +191,15 @@ const goalsSlice = createSlice({
         state.movementGoals[myIndex].currentWeight = goalTarget.currentWeight;
       }
     },
+    dietGoalUnchecked(state, action) {
+      const payload = action.payload;
+      const myIndex = state.movementGoals.findIndex(
+        (goal) => goal.goalName === payload
+      );
+      if (myIndex > -1) {
+        state.dietGoals.splice(myIndex, 1);
+      }
+    },
     movementGoalUnchecked(state, action) {
       const payload = action.payload;
       const myIndex = state.movementGoals.findIndex(
@@ -311,6 +321,61 @@ const goalsSlice = createSlice({
         state.movementGoals.push(movement);
       }
     },
+    dietGoalChecked(state, action) {
+      const goal = action.payload;
+      if (goal.goalName === "Macros") {
+        let diet = {
+          goalName: goal.goalName,
+          fatGoal: goal.fatGoal,
+          carbGoal: goal.carbGoal,
+          proteinGoal: goal.proteinGoal,
+        };
+        state.dietGoals.push(diet);
+      }
+      if (goal.goalName === "Calories") {
+        let diet = {
+          goalName: goal.goalName,
+          calorieGoal: goal.calorieGoal,
+        };
+        state.dietGoals.push(diet);
+      }
+    },
+    calorieGoalChanged(state, action) {
+      const goalTarget = action.payload;
+      const myIndex = state.dietGoals.findIndex(
+        (goal) => goal.goalName === goalTarget.goalName
+      );
+      if (myIndex > -1) {
+        state.dietGoals[myIndex].calorieGoal = goalTarget.calorieGoal;
+      }
+    },
+    fatGoalChanged(state, action) {
+      const goalTarget = action.payload;
+      const myIndex = state.dietGoals.findIndex(
+        (goal) => goal.goalName === goalTarget.goalName
+      );
+      if (myIndex > -1) {
+        state.dietGoals[myIndex].fatGoal = goalTarget.fatGoal;
+      }
+    },
+    carbGoalChanged(state, action) {
+      const goalTarget = action.payload;
+      const myIndex = state.dietGoals.findIndex(
+        (goal) => goal.goalName === goalTarget.goalName
+      );
+      if (myIndex > -1) {
+        state.dietGoals[myIndex].carbGoal = goalTarget.carbGoal;
+      }
+    },
+    proteinGoalChanged(state, action) {
+      const goalTarget = action.payload;
+      const myIndex = state.dietGoals.findIndex(
+        (goal) => goal.goalName === goalTarget.goalName
+      );
+      if (myIndex > -1) {
+        state.dietGoals[myIndex].proteinGoal = goalTarget.proteinGoal;
+      }
+    },
     handleGoalClose(state, action) {
       state.bodyFat = {
         currentBodyFat: undefined,
@@ -324,6 +389,7 @@ const goalsSlice = createSlice({
       };
       state.circumferenceGoals = [];
       state.movementGoals = [];
+      state.dietGoals = [];
     },
     handleUnitChange(state, action) {
       const payload = action.payload;
@@ -362,7 +428,13 @@ export const {
   doublesUnchecked,
   goalDistanceChanged,
   currentTimeChanged,
-  goalTimeChanged
+  goalTimeChanged,
+  dietGoalChecked,
+  dietGoalUnchecked,
+  calorieGoalChanged,
+  fatGoalChanged,
+  carbGoalChanged,
+  proteinGoalChanged,
 } = goalsSlice.actions;
 
 export default goalsSlice.reducer;

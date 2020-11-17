@@ -11,6 +11,7 @@ import { AuthProvider } from "./Auth";
 import { LoginPage } from "./features/users/LoginPage";
 import { Landing } from "./app/Landing";
 import { Home } from "./features/users/usersHome";
+import {UserGoals} from "./features/users/userGoals"
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route exact path="/" component={Home} />
             <Route exact path="/Login" component={LoginPage} />
             <Route exact path="/Landing" component={Landing} />
+            <Route exact path="/UserGoals" component={UserGoals} />
             <Redirect to="/" />
           </Switch>
         </div>

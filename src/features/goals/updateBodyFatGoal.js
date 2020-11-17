@@ -16,7 +16,7 @@ export const UpdateBodyFatGoal = () => {
   const [show, setShow] = useState(false);
   const goals = useSelector((state) => state.goals.bodyFat);
   const userGoals = useSelector((state) => state.users.goals);
-  const myIndex = userGoals.findIndex((goal) => goal.type === "BodyFat");
+  const myIndex = userGoals.findIndex((goal) => goal.type === "Body Fat");
   let numbers = [];
   let options;
   let i;
@@ -60,12 +60,12 @@ export const UpdateBodyFatGoal = () => {
       try {
         const user = firebase.auth().currentUser;
         let userId = user.uid;
-        dispatch(deleteGoal("BodyFat"));
+        dispatch(deleteGoal("Body Fat"));
         firebase
           .database()
           .ref("users/" + userId + "/goals/BodyFat")
           .set({
-            type: "BodyFat",
+            type: "Body Fat",
             currentGoal: goals.currentBodyFat,
             newGoal: goals.goalBodyFat,
           });

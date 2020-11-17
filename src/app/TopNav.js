@@ -102,7 +102,7 @@ export const TopNav = () => {
                   <NavDropdown.Divider />
                   <NavDropdown.Item href="#">Design A Workout</NavDropdown.Item>
                   <NavDropdown.Item href="#">Exercise Library</NavDropdown.Item>
-                  <NavDropdown.Item href="#">
+                  <NavDropdown.Item href="./UserGoals">
                     Track Your Progress
                   </NavDropdown.Item>
                 </NavDropdown>

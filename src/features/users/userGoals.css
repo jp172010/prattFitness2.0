@@ -1,0 +1,9 @@
+#progressContainer{
+    height: 100vh;
+    background-color: goldenrod;
+}
+.goals{
+    height: 40vh;
+    background-color: white;
+    margin: 2vh;
+}
