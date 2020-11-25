@@ -19,7 +19,7 @@ export const GoalDropdown = () => {
     (goal) => goal.type === "Circumference"
   );
   const movementIndex = goals.findIndex((goal) => goal.type === "Movement");
-  const bodyFatIndex = goals.findIndex((goal) => goal.type === "BodyFat");
+  const bodyFatIndex = goals.findIndex((goal) => goal.type === "Body Fat");
   const dietIndex = goals.findIndex((goal) => goal.type === "Diet");
   const weightIndex = goals.findIndex((goal) => goal.type === "Weight");
   if (circumferenceIndex === -1) {
@@ -48,10 +48,6 @@ export const GoalDropdown = () => {
         {bodyFat}
         {movement}
         {diet}
-        <Form>
-          <Form.Group controlId="formBasicCheckbox">
-          </Form.Group>
-        </Form>
       </Dropdown.Menu>
     </Dropdown>
   );

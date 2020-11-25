@@ -1,9 +1,9 @@
 #progressContainer{
-    height: 100vh;
     background-color: goldenrod;
+    min-height: 100vh;
 }
 .goals{
-    height: 40vh;
+    min-height: fit-content;
     background-color: white;
     margin: 2vh;
 }

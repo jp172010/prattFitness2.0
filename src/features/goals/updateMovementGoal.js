@@ -131,6 +131,9 @@ export const UpdateMovementGoal = () => {
       let double = items.double;
       let doubleReps = items.doubleReps;
       let goalDouble = items.goalDouble;
+      let hSPU = items.hSPU;
+      let hSPUReps = items.hSPUReps;
+      let goalHSPU = items.goalHSPU;
       let goalTime = items.goalTime;
       let currentTime = items.currentTime;
       let goalDistance = items.goalDistance;
@@ -147,6 +150,9 @@ export const UpdateMovementGoal = () => {
           double,
           doubleReps,
           goalDouble,
+          hSPU,
+          hSPUReps,
+          goalHSPU,
           goalTime,
           currentTime,
           goalDistance,

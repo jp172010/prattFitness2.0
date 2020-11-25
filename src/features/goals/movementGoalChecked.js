@@ -87,14 +87,6 @@ export const MovementGoalChecked = () => {
         </Modal.Header>
         <Modal.Body>
           <Form>
-          <Form.Control value={unit} onChange={handleUnit} as="select">
-            <option value="Metric" name="Metric">
-              Metric
-            </option>
-            <option value="Imperial" name="Imperial">
-              Imperial
-            </option>
-          </Form.Control>
             <Form.Label>
               What Movements Would You Like To Measure?
               <Form.Group controlId="formBasicCheckbox">
@@ -196,6 +188,14 @@ export const MovementGoalChecked = () => {
                 />
               </Form.Group>
             </Form.Label>
+            <Form.Control value={unit} onChange={handleUnit} as="select">
+            <option value="Metric" name="Metric">
+              Metric
+            </option>
+            <option value="Imperial" name="Imperial">
+              Imperial
+            </option>
+          </Form.Control>
           </Form>
         </Modal.Body>
         {content}

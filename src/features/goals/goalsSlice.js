@@ -163,6 +163,24 @@ const goalsSlice = createSlice({
         state.movementGoals[myIndex].doubleReps = goalTarget.doubleReps;
       }
     },
+    hSPURepsChanged(state, action) {
+      const goalTarget = action.payload;
+      const myIndex = state.movementGoals.findIndex(
+        (goal) => goal.goalName === goalTarget.goalName
+      );
+      if (myIndex > -1) {
+        state.movementGoals[myIndex].hSPUReps = goalTarget.hSPUReps;
+      }
+    },
+    hSPUGoalChanged(state, action) {
+      const goalTarget = action.payload;
+      const myIndex = state.movementGoals.findIndex(
+        (goal) => goal.goalName === goalTarget.goalName
+      );
+      if (myIndex > -1) {
+        state.movementGoals[myIndex].goalHSPU = goalTarget.goalHSPU;
+      }
+    },
     currentHeightChanged(state, action) {
       const goalTarget = action.payload;
       const myIndex = state.movementGoals.findIndex(
@@ -245,8 +263,44 @@ const goalsSlice = createSlice({
         state.movementGoals[myIndex].double = false;
       }
     },
+    hSPUChecked(state, action) {
+      const payload = action.payload;
+      const myIndex = state.movementGoals.findIndex(
+        (goal) => goal.goalName === payload
+      );
+      if (myIndex > -1) {
+        state.movementGoals[myIndex].hSPU = true;
+      }
+    },
+    doublesUnchecked(state, action) {
+      const payload = action.payload;
+      const myIndex = state.movementGoals.findIndex(
+        (goal) => goal.goalName === payload
+      );
+      if (myIndex > -1) {
+        state.movementGoals[myIndex].hSPU = false;
+      }
+    },
     movementGoalChecked(state, action) {
       const goal = action.payload;
+      if (goal.goalName === "Handstand") {
+        let movement = {
+          goalName: goal.goalName,
+          currentTime: goal.currentTime,
+          goalTime: goal.goalTime,
+        };
+        if (goal.hSPU) {
+          movement = {
+            goalName: goal.goalName,
+            currentTime: goal.currentTime,
+            goalTime: goal.goalTime,
+            hSPU: goal.hSPU,
+            hSPUReps: goal.hSPUReps,
+            goalHSPU: goal.goalHSPU,
+          };
+        }
+        state.movementGoals.push(movement);
+      }
       if (goal.goalName === "Pull Up" || goal.goalName === "Jump Rope") {
         let movement = {
           goalName: goal.goalName,
@@ -426,6 +480,10 @@ export const {
   doubleGoalChanged,
   doublesChecked,
   doublesUnchecked,
+  hSPURepsChanged,
+  hSPUGoalChanged,
+  hSPUChecked,
+  hSPUUnchecked,
   goalDistanceChanged,
   currentTimeChanged,
   goalTimeChanged,

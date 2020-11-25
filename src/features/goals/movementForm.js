@@ -16,6 +16,10 @@ import {
   doubleGoalChanged,
   doublesChecked,
   doublesUnchecked,
+  hSPURepsChanged,
+  hSPUGoalChanged,
+  hSPUChecked,
+  hSPUUnchecked,
   goalDistanceChanged,
   currentTimeChanged,
   goalTimeChanged,
@@ -76,6 +80,16 @@ export const MovementForm = ({ goal }) => {
     let doubleReps = e.target.value;
     let goalName = e.target.name;
     dispatch(doubleRepsChanged({ goalName, doubleReps }));
+  };
+  const hSPURepChange = (e) => {
+    let hSPUReps = e.target.value;
+    let goalName = e.target.name;
+    dispatch(hSPURepsChanged({ goalName, hSPUReps }));
+  };
+  const goalHSPUChange = (e) => {
+    let goalHSPU = e.target.value;
+    let goalName = e.target.name;
+    dispatch(hSPUGoalChanged({ goalName, goalHSPU }));
   };
   const currentRepetitionChange = (e) => {
     let currentRepetitions = e.target.value;
@@ -161,11 +175,41 @@ export const MovementForm = ({ goal }) => {
     );
   };
 
+  const HSPUForm = () => {
+    return (
+      <Form>
+        <Form.Group>
+          <Form.Label>Current HSPU</Form.Label>
+          <Form.Control
+            value={goal.hSPUReps}
+            name={goal.goalName}
+            onChange={hSPURepChange}
+            as="select"
+          >
+            {options}
+          </Form.Control>
+          <Form.Label>Goal HSPU</Form.Label>
+          <Form.Control
+            value={goal.goalHSPU}
+            name={goal.goalName}
+            onChange={goalHSPUChange}
+            as="select"
+          >
+            {options}
+          </Form.Control>
+        </Form.Group>
+      </Form>
+    );
+  };
+
   if (goal.weighted === true) {
     content = <WeightedForm />;
   }
   if (goal.double === true) {
     content = <DoubleForm />;
+  }
+  if (goal.hSPU === true) {
+    content = <HSPUForm />;
   }
   const handleWeighted = (e) => {
     if (e.target.checked) {
@@ -179,6 +223,13 @@ export const MovementForm = ({ goal }) => {
       dispatch(doublesChecked(goal.goalName));
     } else {
       dispatch(doublesUnchecked(goal.goalName));
+    }
+  };
+  const handleHSPU = (e) => {
+    if (e.target.checked) {
+      dispatch(hSPUChecked(goal.goalName));
+    } else {
+      dispatch(hSPUUnchecked(goal.goalName));
     }
   };
 
@@ -223,6 +274,46 @@ export const MovementForm = ({ goal }) => {
             type="checkbox"
             label="Weighted"
             checked={goal.weighted}
+          />
+          {content}
+        </Form.Group>
+      </Form>
+    );
+  }
+  if (goal.goalName === "Handstand") {
+    let timeOptions = numbers.map((number) => (
+      <option key={number} value={number}>
+        {number}sec
+      </option>
+    ));
+    return (
+      <Form>
+        <h6>Handstand</h6>
+        <Form.Group>
+          <Form.Label>Current Achievable Time</Form.Label>
+          <Form.Control
+            value={goal.currentTime}
+            name={goal.goalName}
+            onChange={timeChange}
+            as="select"
+          >
+            {timeOptions}
+          </Form.Control>
+          <Form.Label>Goal Time</Form.Label>
+          <Form.Control
+            value={goal.goalTime}
+            name={goal.goalName}
+            onChange={goalTimeChange}
+            as="select"
+          >
+            {timeOptions}sec
+          </Form.Control>
+          <Form.Check
+            onChange={handleHSPU}
+            name="HSPU"
+            type="checkbox"
+            label="HSPU"
+            checked={goal.hSPU}
           />
           {content}
         </Form.Group>
