@@ -1,6 +1,5 @@
 import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
-import { Form } from "react-bootstrap";
 import CircumferenceGoalChecked from "./circumferenceGoalChecked";
 import { useSelector } from "react-redux";
 import { WeightGoalChecked } from "./weightGoalChecked";
